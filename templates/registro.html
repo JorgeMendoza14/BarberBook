@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro | BarberBook</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="auth-container">
+        <div class="auth-card">
+            <h1>Crear cuenta</h1>
+            <p>Únete a BarberBook 💈</p>
+
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                {% for categoria, mensaje in mensajes %}
+                    <p class="mensaje {{ categoria }}">{{ mensaje }}</p>
+                {% endfor %}
+            {% endwith %}
+
+            <form action="{{ url_for('registro') }}" method="POST">
+                <input type="text" name="nombre" placeholder="Nombre" maxlength="100" required>
+                <input type="text" name="apellido" placeholder="Apellido" maxlength="100" required>
+                <input type="email" name="correo" placeholder="Correo electrónico" maxlength="150" required>
+                <input type="tel" name="telefono" placeholder="Teléfono" maxlength="20">
+                <input type="password" name="contrasena" placeholder="Contraseña (mínimo 8 caracteres)" minlength="8" required>
+
+                <button type="submit" class="btn">Registrarme</button>
+            </form>
+
+            <p>¿Ya tienes una cuenta?
+                <a href="{{ url_for('login') }}">Iniciar sesión</a>
+            </p>
+        </div>
+    </main>
+</body>
+</html>

@@ -159,3 +159,392 @@ footer {
         min-height: 60vh;
     }
 }
+
+
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 20px;
+}
+
+.auth-card {
+    background: #1e1e1e;
+    padding: 40px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 440px;
+    text-align: center;
+    border: 1px solid #393225;
+}
+
+.auth-card h1 {
+    font-size: 30px;
+    color: #d4af37;
+    margin-bottom: 12px;
+}
+
+.auth-card p {
+    color: #bbbbbb;
+    margin-bottom: 20px;
+}
+
+.auth-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.auth-card input {
+    padding: 14px;
+    background: #111;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 7px;
+    font-size: 15px;
+}
+
+.auth-card input:focus {
+    outline: none;
+    border-color: #d4af37;
+}
+
+.auth-card button {
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.auth-card a {
+    color: #d4af37;
+}
+
+.mensaje {
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.mensaje.error {
+    background: #522222;
+    color: #ffd5d5;
+}
+
+.mensaje.success {
+    background: #244a30;
+    color: #d6ffe1;
+}
+
+.barber-dashboard {
+    min-height: 100vh;
+    background: #101010;
+    color: #fff;
+}
+
+.barber-dashboard .dashboard-header {
+    min-height: 82px;
+    padding: 16px 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid #302b20;
+    background: #151515;
+}
+
+.barber-dashboard .dashboard-brand {
+    color: #fff;
+    font-size: 25px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.barber-dashboard .dashboard-brand span {
+    color: #d4af37;
+}
+
+.barber-dashboard .dashboard-user {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.barber-dashboard .dashboard-user > div {
+    display: grid;
+    gap: 4px;
+}
+
+.barber-dashboard .dashboard-user-label,
+.barber-dashboard .stat-label,
+.barber-dashboard .stat-note,
+.barber-dashboard .appointments-count,
+.barber-dashboard .no-action {
+    color: #b7b7b7;
+    font-size: 13px;
+}
+
+.barber-dashboard .dashboard-user strong {
+    font-size: 14px;
+}
+
+.barber-dashboard .dashboard-logout {
+    padding: 10px 15px;
+    border: 1px solid #655528;
+    border-radius: 6px;
+    background: transparent;
+    color: #e6c85a;
+    font: inherit;
+    cursor: pointer;
+}
+
+.barber-dashboard .dashboard-logout:hover {
+    background: #292416;
+}
+
+.barber-dashboard .dashboard-main {
+    width: min(1440px, 100%);
+    margin: 0 auto;
+    padding: 48px 7% 72px;
+}
+
+.barber-dashboard .dashboard-intro {
+    margin-bottom: 32px;
+}
+
+.barber-dashboard .dashboard-eyebrow {
+    margin-bottom: 10px;
+    color: #d4af37;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.barber-dashboard .dashboard-intro h1 {
+    margin-bottom: 9px;
+    font-size: clamp(32px, 5vw, 44px);
+}
+
+.barber-dashboard .dashboard-intro > p:last-child {
+    color: #b7b7b7;
+    line-height: 1.6;
+}
+
+.barber-dashboard .dashboard-messages {
+    margin-bottom: 22px;
+}
+
+.barber-dashboard .dashboard-messages .mensaje {
+    margin-bottom: 10px;
+}
+
+.barber-dashboard .dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 42px;
+}
+
+.barber-dashboard .stat-card {
+    min-height: 145px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 9px;
+    border: 1px solid #38342a;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #202020, #181818);
+}
+
+.barber-dashboard .stat-card strong {
+    color: #e3c34d;
+    font-size: 34px;
+    line-height: 1;
+}
+
+.barber-dashboard .stat-note {
+    font-size: 12px;
+}
+
+.barber-dashboard .appointments-section {
+    overflow: hidden;
+    border: 1px solid #38342a;
+    border-radius: 10px;
+    background: #181818;
+}
+
+.barber-dashboard .appointments-heading {
+    padding: 22px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid #302b20;
+}
+
+.barber-dashboard .appointments-heading .dashboard-eyebrow {
+    margin-bottom: 6px;
+}
+
+.barber-dashboard .appointments-heading h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 22px;
+}
+
+.barber-dashboard .appointments-count {
+    white-space: nowrap;
+}
+
+.barber-dashboard .appointments-table-wrap {
+    overflow-x: auto;
+}
+
+.barber-dashboard .appointments-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.barber-dashboard .appointments-table th,
+.barber-dashboard .appointments-table td {
+    padding: 16px 18px;
+    border-bottom: 1px solid #2b2b2b;
+    vertical-align: middle;
+}
+
+.barber-dashboard .appointments-table th {
+    color: #d4af37;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .4px;
+}
+
+.barber-dashboard .appointments-table td {
+    color: #e7e7e7;
+    font-size: 13px;
+}
+
+.barber-dashboard .appointments-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.barber-dashboard .status-badge {
+    display: inline-block;
+    padding: 6px 9px;
+    border-radius: 20px;
+    background: #292929;
+    color: #eee;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.barber-dashboard .status-pendiente {
+    background: #3a3017;
+    color: #f0d36b;
+}
+
+.barber-dashboard .status-confirmada,
+.barber-dashboard .status-completada {
+    background: #1f3828;
+    color: #9de0af;
+}
+
+.barber-dashboard .status-rechazada,
+.barber-dashboard .status-cancelada {
+    background: #3d2525;
+    color: #f0aaaa;
+}
+
+.barber-dashboard .appointment-actions {
+    display: flex;
+    gap: 7px;
+}
+
+.barber-dashboard .action-button {
+    padding: 7px 9px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.barber-dashboard .action-accept {
+    background: #d4af37;
+    color: #151515;
+}
+
+.barber-dashboard .action-accept:hover {
+    background: #e5c95e;
+}
+
+.barber-dashboard .action-reject {
+    border-color: #714141;
+    background: #352020;
+    color: #f1b4b4;
+}
+
+.barber-dashboard .action-reject:hover {
+    background: #4a2828;
+}
+
+.barber-dashboard .empty-appointments {
+    padding: 40px 18px !important;
+    color: #b7b7b7 !important;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .barber-dashboard .dashboard-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .barber-dashboard .dashboard-header {
+        padding: 15px 5%;
+    }
+
+    .barber-dashboard .dashboard-user {
+        gap: 12px;
+    }
+
+    .barber-dashboard .dashboard-user-label {
+        display: none;
+    }
+
+    .barber-dashboard .dashboard-user strong {
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .barber-dashboard .dashboard-logout {
+        padding: 9px 10px;
+        font-size: 12px;
+    }
+
+    .barber-dashboard .dashboard-main {
+        padding: 34px 5% 48px;
+    }
+
+    .barber-dashboard .dashboard-stats {
+        gap: 11px;
+    }
+
+    .barber-dashboard .stat-card {
+        min-height: 130px;
+        padding: 16px;
+    }
+
+    .barber-dashboard .appointments-heading {
+        padding: 18px;
+    }
+
+    .barber-dashboard .appointments-heading h2 {
+        font-size: 19px;
+    }
+}

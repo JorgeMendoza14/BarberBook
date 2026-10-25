@@ -1,0 +1,24 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi panel | BarberBook</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="auth-container">
+        <div class="auth-card">
+            <h1>Hola, {{ session['nombre'] }} 💈</h1>
+            <p>Bienvenido a tu panel de cliente.</p>
+            <p>Próximamente podrás reservar tus citas aquí.</p>
+
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit" class="btn">Cerrar sesión</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
+

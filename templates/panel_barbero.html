@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101010">
+    <title>Panel de gestión | BarberBook</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="barber-dashboard">
+    <header class="dashboard-header">
+        <a class="dashboard-brand" href="{{ url_for('panel_barbero') }}">
+            Barber<span>Book</span>
+        </a>
+        <div class="dashboard-user">
+            <div>
+                <span class="dashboard-user-label">Sesión iniciada</span>
+                <strong>{{ session.get('nombre', 'Usuario') }}</strong>
+            </div>
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button class="dashboard-logout" type="submit">Cerrar sesión</button>
+            </form>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <section class="dashboard-intro" aria-labelledby="dashboard-title">
+            <p class="dashboard-eyebrow">BARBERBOOK · GESTIÓN</p>
+            <h1 id="dashboard-title">Panel de citas</h1>
+            <p>Consulta la actividad y gestiona las solicitudes de tu barbería.</p>
+        </section>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                <div class="dashboard-messages" aria-live="polite">
+                    {% for categoria, mensaje in mensajes %}
+                        <p class="mensaje {{ categoria }}">{{ mensaje }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="dashboard-stats" aria-label="Resumen de citas">
+            <article class="stat-card">
+                <span class="stat-label">Citas de hoy</span>
+                <strong>{{ estadisticas.citas_hoy }}</strong>
+                <span class="stat-note">Agenda del día</span>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Pendientes</span>
+                <strong>{{ estadisticas.pendientes }}</strong>
+                <span class="stat-note">Requieren atención</span>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Confirmadas</span>
+                <strong>{{ estadisticas.confirmadas }}</strong>
+                <span class="stat-note">Citas aceptadas</span>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Completadas</span>
+                <strong>{{ estadisticas.completadas }}</strong>
+                <span class="stat-note">Servicios realizados</span>
+            </article>
+        </section>
+
+        <section class="appointments-section" aria-labelledby="appointments-title">
+            <div class="appointments-heading">
+                <div>
+                    <p class="dashboard-eyebrow">AGENDA</p>
+                    <h2 id="appointments-title">Solicitudes de citas</h2>
+                </div>
+                <span class="appointments-count">{{ citas|length }} citas</span>
+            </div>
+
+            <div class="appointments-table-wrap">
+                <table class="appointments-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Cliente</th>
+                            <th scope="col">Barbero</th>
+                            <th scope="col">Servicio</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Hora</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cita in citas %}
+                            <tr>
+                                <td data-label="Cliente">{{ cita.cliente }}</td>
+                                <td data-label="Barbero">{{ cita.barbero }}</td>
+                                <td data-label="Servicio">{{ cita.servicio }}</td>
+                                <td data-label="Fecha">{{ cita.fecha }}</td>
+                                <td data-label="Hora">{{ cita.hora }}</td>
+                                <td data-label="Estado">
+                                    <span class="status-badge status-{{ cita.estado }}">
+                                        {{ cita.estado|capitalize }}
+                                    </span>
+                                </td>
+                                <td data-label="Acciones">
+                                    {% if cita.estado == 'pendiente' %}
+                                        <div class="appointment-actions">
+                                            <form
+                                                action="{{ url_for('actualizar_cita', id_cita=cita.id_cita, accion='aceptar') }}"
+                                                method="POST"
+                                            >
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button class="action-button action-accept" type="submit">
+                                                    Aceptar
+                                                </button>
+                                            </form>
+                                            <form
+                                                action="{{ url_for('actualizar_cita', id_cita=cita.id_cita, accion='rechazar') }}"
+                                                method="POST"
+                                            >
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button class="action-button action-reject" type="submit">
+                                                    Rechazar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {% else %}
+                                        <span class="no-action">Sin acciones</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td class="empty-appointments" colspan="7">
+                                    No hay solicitudes de citas para mostrar.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
