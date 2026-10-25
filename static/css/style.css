@@ -1,0 +1,161 @@
+
+:root {
+    --fondo: #101010;
+    --tarjeta: #1e1e1e;
+    --dorado: #d4af37;
+    --blanco: #ffffff;
+    --gris: #bbbbbb;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--fondo);
+    color: var(--blanco);
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 8%;
+    gap: 20px;
+}
+
+.logo {
+    color: var(--blanco);
+    font-size: 26px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.logo span, .etiqueta {
+    color: var(--dorado);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.nav-links a {
+    color: var(--blanco);
+    text-decoration: none;
+}
+
+.btn {
+    display: inline-block;
+    background: var(--dorado);
+    color: #111 !important;
+    padding: 13px 23px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.hero {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    padding: 70px 8%;
+    background: linear-gradient(135deg, #242017, #101010 70%);
+}
+
+.hero-content {
+    max-width: 650px;
+}
+
+.etiqueta {
+    font-size: 13px;
+    letter-spacing: 3px;
+    margin-bottom: 18px;
+}
+
+h1 {
+    font-size: clamp(38px, 6vw, 72px);
+    margin-bottom: 22px;
+}
+
+.hero p {
+    color: var(--gris);
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.servicios, .reservar {
+    padding: 75px 8%;
+    text-align: center;
+}
+
+h2 {
+    font-size: 32px;
+    margin-bottom: 35px;
+}
+
+.servicios-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.servicio {
+    background: var(--tarjeta);
+    padding: 35px 24px;
+    border-radius: 12px;
+    text-align: left;
+}
+
+.servicio h3 {
+    color: var(--dorado);
+    margin-bottom: 14px;
+}
+
+.servicio p {
+    color: var(--gris);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.servicio strong {
+    font-size: 24px;
+}
+
+.reservar {
+    background: #191919;
+}
+
+.reservar p {
+    color: var(--gris);
+}
+
+footer {
+    padding: 25px;
+    text-align: center;
+    color: var(--gris);
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+    }
+
+    .nav-links {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+
+    .servicios-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        min-height: 60vh;
+    }
+}

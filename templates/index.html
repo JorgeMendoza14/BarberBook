@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BarberBook | Tu barbería</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <a href="/" class="logo">💈 Barber<span>Book</span></a>
+
+            <div class="nav-links">
+                <a href="/">Inicio</a>
+                <a href="#servicios">Servicios</a>
+                <a href="#contacto">Contacto</a>
+                <a href="#reservar" class="btn">Reservar cita</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <p class="etiqueta">ESTILO Y PRECISIÓN</p>
+                <h1>Tu estilo comienza aquí.</h1>
+                <p>
+                    Reserva tu próximo corte de cabello
+                    de manera fácil, rápida y segura.
+                </p>
+                <a href="#reservar" class="btn">Reservar mi cita</a>
+            </div>
+        </section>
+
+        <section id="servicios" class="servicios">
+            <h2>Nuestros servicios</h2>
+
+            <div class="servicios-grid">
+                <article class="servicio">
+                    <h3>Corte clásico</h3>
+                    <p>Un estilo elegante para cualquier ocasión.</p>
+                    <strong>$5.00</strong>
+                </article>
+
+                <article class="servicio">
+                    <h3>Degradado</h3>
+                    <p>Un corte moderno con acabado profesional.</p>
+                    <strong>$7.00</strong>
+                </article>
+
+                <article class="servicio">
+                    <h3>Corte + Barba</h3>
+                    <p>Un servicio completo para renovar tu estilo.</p>
+                    <strong>$10.00</strong>
+                </article>
+            </div>
+        </section>
+
+        <section id="reservar" class="reservar">
+            <h2>Agenda tu próximo corte</h2>
+            <p>Próximamente podrás consultar los horarios y reservar en línea.</p>
+        </section>
+    </main>
+
+    <footer id="contacto">
+        <p>© 2026 BarberBook. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>
