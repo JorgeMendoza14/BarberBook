@@ -15,10 +15,10 @@
             <p>Próximamente podrás reservar tus citas aquí.</p>
 
             <form action="{{ url_for('logout') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn">Cerrar sesión</button>
             </form>
         </div>
     </main>
 </body>
 </html>
-

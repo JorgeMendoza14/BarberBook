@@ -264,6 +264,29 @@ footer {
     color: #d4af37;
 }
 
+.barber-dashboard .dashboard-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.barber-dashboard .dashboard-nav a {
+    padding: 9px 11px;
+    border-radius: 6px;
+    color: #d0d0d0;
+    font-size: 13px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.barber-dashboard .dashboard-nav a:hover,
+.barber-dashboard .dashboard-nav a.is-active {
+    background: #2a2518;
+    color: #e4c34d;
+}
+
 .barber-dashboard .dashboard-user {
     display: flex;
     align-items: center;
@@ -372,6 +395,162 @@ footer {
     border: 1px solid #38342a;
     border-radius: 10px;
     background: #181818;
+}
+
+.barber-dashboard .admin-form-card {
+    margin-bottom: 36px;
+    padding: 24px;
+    border: 1px solid #38342a;
+    border-radius: 10px;
+    background: #181818;
+}
+
+.barber-dashboard .admin-section-heading {
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.barber-dashboard .admin-section-heading .dashboard-eyebrow {
+    margin-bottom: 6px;
+}
+
+.barber-dashboard .admin-section-heading h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 22px;
+}
+
+.barber-dashboard .admin-secondary-link {
+    color: #e4c34d;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.barber-dashboard .admin-secondary-link:hover {
+    text-decoration: underline;
+}
+
+.barber-dashboard .admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.barber-dashboard .admin-form-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #e3e3e3;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.barber-dashboard .admin-form-grid input,
+.barber-dashboard .admin-form-grid textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 12px;
+    border: 1px solid #424242;
+    border-radius: 6px;
+    background: #101010;
+    color: #fff;
+    font: inherit;
+    font-weight: 400;
+}
+
+.barber-dashboard .admin-form-grid textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.barber-dashboard .admin-form-grid input:focus,
+.barber-dashboard .admin-form-grid textarea:focus {
+    outline: 2px solid #d4af37;
+    outline-offset: 1px;
+    border-color: #d4af37;
+}
+
+.barber-dashboard .admin-form-grid input::placeholder,
+.barber-dashboard .admin-form-grid textarea::placeholder {
+    color: #858585;
+}
+
+.barber-dashboard .admin-input-affix {
+    position: relative;
+}
+
+.barber-dashboard .admin-input-affix > span {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    color: #d4af37;
+    transform: translateY(-50%);
+}
+
+.barber-dashboard .admin-input-affix input {
+    padding-left: 28px;
+}
+
+.barber-dashboard .admin-field-wide {
+    grid-column: 1 / -1;
+}
+
+.barber-dashboard .admin-form-actions {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.barber-dashboard .admin-primary-button {
+    min-height: 43px;
+    padding: 11px 18px;
+    border: 0;
+    border-radius: 6px;
+    background: #d4af37;
+    color: #151515;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.barber-dashboard .admin-primary-button:hover {
+    background: #e5c95e;
+}
+
+.barber-dashboard .admin-list-section {
+    margin-top: 0;
+}
+
+.barber-dashboard .admin-table {
+    min-width: 850px;
+}
+
+.barber-dashboard .admin-table td {
+    max-width: 260px;
+    overflow-wrap: anywhere;
+}
+
+.barber-dashboard .admin-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.barber-dashboard .admin-row-actions form {
+    margin: 0;
+}
+
+.barber-dashboard .action-edit {
+    border-color: #655528;
+    background: #292416;
+    color: #e6c85a;
+    text-decoration: none;
+}
+
+.barber-dashboard .action-edit:hover {
+    background: #3a321c;
 }
 
 .barber-dashboard .appointments-heading {
@@ -497,6 +676,15 @@ footer {
 }
 
 @media (max-width: 900px) {
+    .barber-dashboard .dashboard-header {
+        flex-wrap: wrap;
+    }
+
+    .barber-dashboard .dashboard-nav {
+        order: 3;
+        width: 100%;
+    }
+
     .barber-dashboard .dashboard-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -505,6 +693,17 @@ footer {
 @media (max-width: 600px) {
     .barber-dashboard .dashboard-header {
         padding: 15px 5%;
+    }
+
+    .barber-dashboard .dashboard-nav {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 3px;
+    }
+
+    .barber-dashboard .dashboard-nav a {
+        padding: 8px 9px;
     }
 
     .barber-dashboard .dashboard-user {
@@ -546,5 +745,18 @@ footer {
 
     .barber-dashboard .appointments-heading h2 {
         font-size: 19px;
+    }
+
+    .barber-dashboard .admin-form-card {
+        padding: 18px;
+    }
+
+    .barber-dashboard .admin-form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .barber-dashboard .admin-field-wide {
+        grid-column: auto;
     }
 }

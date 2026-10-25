@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101010">
+    <title>Barberos | BarberBook</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="barber-dashboard">
+    {% set active_page = 'barberos' %}
+    {% include "_admin_nav.html" %}
+
+    <main class="dashboard-main">
+        <section class="dashboard-intro">
+            <p class="dashboard-eyebrow">ADMINISTRACIÓN</p>
+            <h1>Gestión de barberos</h1>
+            <p>Administra el equipo y conserva su historial de citas al desactivar perfiles.</p>
+        </section>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                <div class="dashboard-messages" aria-live="polite">
+                    {% for categoria, mensaje in mensajes %}
+                        <p class="mensaje {{ categoria }}">{{ mensaje }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="admin-form-card" aria-labelledby="barber-form-title">
+            <div class="admin-section-heading">
+                <div>
+                    <p class="dashboard-eyebrow">{% if barbero_edicion %}ACTUALIZACIÓN{% else %}EQUIPO{% endif %}</p>
+                    <h2 id="barber-form-title">
+                        {% if barbero_edicion %}Editar barbero{% else %}Registrar barbero{% endif %}
+                    </h2>
+                </div>
+                {% if barbero_edicion %}
+                    <a class="admin-secondary-link" href="{{ url_for('administrar_barberos') }}">Cancelar edición</a>
+                {% endif %}
+            </div>
+            <form
+                class="admin-form-grid"
+                action="{% if barbero_edicion %}{{ url_for('editar_barbero', id_barbero=barbero_edicion.id_barbero) }}{% else %}{{ url_for('administrar_barberos') }}{% endif %}"
+                method="POST"
+            >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label>
+                    Nombre
+                    <input type="text" name="nombre" maxlength="100" required
+                           value="{{ barbero_edicion.nombre if barbero_edicion else '' }}">
+                </label>
+                <label>
+                    Apellido
+                    <input type="text" name="apellido" maxlength="100" required
+                           value="{{ barbero_edicion.apellido if barbero_edicion else '' }}">
+                </label>
+                <label>
+                    Correo electrónico
+                    <input type="email" name="correo" maxlength="150" required
+                           value="{{ barbero_edicion.correo if barbero_edicion else '' }}">
+                </label>
+                <label>
+                    Teléfono
+                    <input type="tel" name="telefono" maxlength="20"
+                           value="{{ barbero_edicion.telefono if barbero_edicion else '' }}">
+                </label>
+                <label>
+                    Especialidad
+                    <input type="text" name="especialidad" maxlength="100"
+                           value="{{ barbero_edicion.especialidad if barbero_edicion else '' }}">
+                </label>
+                {% if not barbero_edicion %}
+                    <label>
+                        Contraseña inicial
+                        <input type="password" name="contrasena" minlength="8" required
+                               autocomplete="new-password">
+                    </label>
+                {% endif %}
+                <div class="admin-form-actions admin-field-wide">
+                    <button class="admin-primary-button" type="submit">
+                        {% if barbero_edicion %}Guardar cambios{% else %}Registrar barbero{% endif %}
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="appointments-section admin-list-section" aria-labelledby="barbers-title">
+            <div class="appointments-heading">
+                <div>
+                    <p class="dashboard-eyebrow">EQUIPO</p>
+                    <h2 id="barbers-title">Barberos registrados</h2>
+                </div>
+                <span class="appointments-count">{{ barberos|length }} barberos</span>
+            </div>
+            <div class="appointments-table-wrap">
+                <table class="appointments-table admin-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Correo</th>
+                            <th scope="col">Teléfono</th>
+                            <th scope="col">Especialidad</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for barbero in barberos %}
+                            <tr>
+                                <td data-label="Nombre">{{ barbero.nombre }} {{ barbero.apellido }}</td>
+                                <td data-label="Correo">{{ barbero.correo }}</td>
+                                <td data-label="Teléfono">{{ barbero.telefono or '—' }}</td>
+                                <td data-label="Especialidad">{{ barbero.especialidad or '—' }}</td>
+                                <td data-label="Estado">
+                                    <span class="status-badge {% if barbero.activo %}status-confirmada{% else %}status-rechazada{% endif %}">
+                                        {{ 'Activo' if barbero.activo else 'Inactivo' }}
+                                    </span>
+                                </td>
+                                <td data-label="Acciones">
+                                    <div class="admin-row-actions">
+                                        <a class="action-button action-edit"
+                                           href="{{ url_for('editar_barbero', id_barbero=barbero.id_barbero) }}">Editar</a>
+                                        <form action="{{ url_for('cambiar_estado_barbero', id_barbero=barbero.id_barbero) }}" method="POST">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button class="action-button {% if barbero.activo %}action-reject{% else %}action-accept{% endif %}" type="submit">
+                                                {{ 'Desactivar' if barbero.activo else 'Activar' }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td class="empty-appointments" colspan="6">Aún no hay barberos registrados.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101010">
+    <title>Servicios | BarberBook</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="barber-dashboard">
+    {% set active_page = 'servicios' %}
+    {% include "_admin_nav.html" %}
+
+    <main class="dashboard-main">
+        <section class="dashboard-intro">
+            <p class="dashboard-eyebrow">ADMINISTRACIÓN</p>
+            <h1>Gestión de servicios</h1>
+            <p>Administra el catálogo, sus precios y la duración de cada servicio.</p>
+        </section>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                <div class="dashboard-messages" aria-live="polite">
+                    {% for categoria, mensaje in mensajes %}
+                        <p class="mensaje {{ categoria }}">{{ mensaje }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="admin-form-card" aria-labelledby="service-form-title">
+            <div class="admin-section-heading">
+                <div>
+                    <p class="dashboard-eyebrow">{% if servicio_edicion %}ACTUALIZACIÓN{% else %}NUEVO CATÁLOGO{% endif %}</p>
+                    <h2 id="service-form-title">
+                        {% if servicio_edicion %}Editar servicio{% else %}Registrar servicio{% endif %}
+                    </h2>
+                </div>
+                {% if servicio_edicion %}
+                    <a class="admin-secondary-link" href="{{ url_for('administrar_servicios') }}">Cancelar edición</a>
+                {% endif %}
+            </div>
+            <form
+                class="admin-form-grid"
+                action="{% if servicio_edicion %}{{ url_for('editar_servicio', id_servicio=servicio_edicion.id_servicio) }}{% else %}{{ url_for('administrar_servicios') }}{% endif %}"
+                method="POST"
+            >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label>
+                    Nombre
+                    <input type="text" name="nombre" maxlength="100" required
+                           value="{{ servicio_edicion.nombre if servicio_edicion else '' }}">
+                </label>
+                <label>
+                    Precio
+                    <div class="admin-input-affix">
+                        <span>$</span>
+                        <input type="number" name="precio" min="0" max="99999999.99"
+                               step="0.01" required
+                               value="{{ servicio_edicion.precio if servicio_edicion else '' }}">
+                    </div>
+                </label>
+                <label>
+                    Duración (minutos)
+                    <input type="number" name="duracion_minutos" min="1"
+                           max="2147483647" step="1" required
+                           value="{{ servicio_edicion.duracion_minutos if servicio_edicion else '' }}">
+                </label>
+                <label class="admin-field-wide">
+                    Descripción
+                    <textarea name="descripcion" rows="3">{{ servicio_edicion.descripcion if servicio_edicion and servicio_edicion.descripcion else '' }}</textarea>
+                </label>
+                <div class="admin-form-actions admin-field-wide">
+                    <button class="admin-primary-button" type="submit">
+                        {% if servicio_edicion %}Guardar cambios{% else %}Registrar servicio{% endif %}
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="appointments-section admin-list-section" aria-labelledby="services-title">
+            <div class="appointments-heading">
+                <div>
+                    <p class="dashboard-eyebrow">CATÁLOGO</p>
+                    <h2 id="services-title">Servicios registrados</h2>
+                </div>
+                <span class="appointments-count">{{ servicios|length }} servicios</span>
+            </div>
+            <div class="appointments-table-wrap">
+                <table class="appointments-table admin-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Servicio</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Duración</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for servicio in servicios %}
+                            <tr>
+                                <td data-label="Servicio">{{ servicio.nombre }}</td>
+                                <td data-label="Descripción">{{ servicio.descripcion or '—' }}</td>
+                                <td data-label="Precio">${{ '%.2f'|format(servicio.precio) }}</td>
+                                <td data-label="Duración">{{ servicio.duracion_minutos }} min</td>
+                                <td data-label="Estado">
+                                    <span class="status-badge {% if servicio.activo %}status-confirmada{% else %}status-rechazada{% endif %}">
+                                        {{ 'Activo' if servicio.activo else 'Inactivo' }}
+                                    </span>
+                                </td>
+                                <td data-label="Acciones">
+                                    <div class="admin-row-actions">
+                                        <a class="action-button action-edit"
+                                           href="{{ url_for('editar_servicio', id_servicio=servicio.id_servicio) }}">Editar</a>
+                                        <form action="{{ url_for('cambiar_estado_servicio', id_servicio=servicio.id_servicio) }}" method="POST">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button class="action-button {% if servicio.activo %}action-reject{% else %}action-accept{% endif %}" type="submit">
+                                                {{ 'Desactivar' if servicio.activo else 'Activar' }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td class="empty-appointments" colspan="6">Aún no hay servicios registrados.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

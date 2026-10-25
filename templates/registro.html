@@ -20,6 +20,7 @@
             {% endwith %}
 
             <form action="{{ url_for('registro') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="text" name="nombre" placeholder="Nombre" maxlength="100" required>
                 <input type="text" name="apellido" placeholder="Apellido" maxlength="100" required>
                 <input type="email" name="correo" placeholder="Correo electrónico" maxlength="150" required>
