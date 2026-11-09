@@ -284,7 +284,32 @@ def validar_datos_cita(cursor, formulario, id_cita_actual=None):
 # Pagina principal
 @app.route("/")
 def inicio():
-    return render_template("index.html")
+    servicios = []
+    conexion = None
+    cursor = None
+
+    # Los servicios de la portada se leen de la base de datos
+    try:
+        conexion = obtener_conexion()
+        cursor = conexion.cursor(dictionary=True)
+        cursor.execute(
+            """
+            SELECT nombre, descripcion, precio, duracion_minutos
+            FROM servicios
+            WHERE activo = TRUE
+            ORDER BY precio
+            """
+        )
+        servicios = cursor.fetchall()
+    except Exception:
+        app.logger.exception("Error al cargar los servicios de la portada")
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+
+    return render_template("index.html", servicios=servicios)
 
 
 # Registro de clientes

@@ -8,6 +8,7 @@
 -- (El administrador se crea con: python crear_admin.py)
 -- ============================================================
 
+SET NAMES utf8mb4;
 USE barberbook;
 
 SET @clave = 'scrypt:32768:8:1$qZGIA1Q1gBQ9C5ze$1348af5698222b1f12de47151dbf657ba2e299d8f1d6d6bc1e70370fd42fb460d38ccdf87ab130595eb0c04d86b11ac988739f11d69567dfd626d9cc0a2b4b79';
