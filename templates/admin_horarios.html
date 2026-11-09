@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101010">
+    <title>Horarios | BarberBook</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="barber-dashboard">
+    {% set active_page = 'barberos' %}
+    {% include "_admin_nav.html" %}
+
+    <main class="dashboard-main">
+        <section class="dashboard-intro">
+            <p class="dashboard-eyebrow">ADMINISTRACIÓN</p>
+            <h1>Horarios de {{ barbero.nombre }} {{ barbero.apellido }}</h1>
+            <p>Define los días y horas en que el barbero atiende. Los clientes solo podrán reservar dentro de estos turnos.</p>
+        </section>
+
+        {% include "_mensajes.html" %}
+
+        <section class="admin-form-card" aria-labelledby="horario-form-title">
+            <div class="admin-section-heading">
+                <div>
+                    <p class="dashboard-eyebrow">NUEVO TURNO</p>
+                    <h2 id="horario-form-title">Agregar horario</h2>
+                </div>
+                <a class="admin-secondary-link" href="{{ url_for('administrar_barberos') }}">Volver a barberos</a>
+            </div>
+            <form class="admin-form-grid" action="{{ url_for('administrar_horarios', id_barbero=barbero.id_barbero) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="admin-field-wide">
+                    <span class="campo-titulo">Días</span>
+                    <div class="dias-semana">
+                        {% for numero, nombre in dias.items() %}
+                            <label class="dia-opcion">
+                                <input type="checkbox" name="dias" value="{{ numero }}" {% if numero <= 5 %}checked{% endif %}>
+                                {{ nombre }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <label>
+                    Hora de inicio
+                    <input type="time" name="hora_inicio" value="09:00" required>
+                </label>
+                <label>
+                    Hora de fin
+                    <input type="time" name="hora_fin" value="18:00" required>
+                </label>
+                <div class="admin-form-actions admin-field-wide">
+                    <button class="admin-primary-button" type="submit">Agregar horario</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="appointments-section admin-list-section" aria-labelledby="horarios-title">
+            <div class="appointments-heading">
+                <div>
+                    <p class="dashboard-eyebrow">SEMANA</p>
+                    <h2 id="horarios-title">Turnos registrados</h2>
+                </div>
+                <span class="appointments-count">{{ horarios|length }} turnos</span>
+            </div>
+            <div class="appointments-table-wrap">
+                <table class="appointments-table admin-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Día</th>
+                            <th scope="col">Desde</th>
+                            <th scope="col">Hasta</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for horario in horarios %}
+                            <tr>
+                                <td data-label="Día">{{ dias[horario.dia_semana] }}</td>
+                                <td data-label="Desde">{{ horario.hora_inicio }}</td>
+                                <td data-label="Hasta">{{ horario.hora_fin }}</td>
+                                <td data-label="Acciones">
+                                    <form action="{{ url_for('eliminar_horario', id_horario=horario.id_horario) }}" method="POST"
+                                          onsubmit="return confirm('¿Eliminar este turno?');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button class="action-button action-reject" type="submit">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td class="empty-appointments" colspan="4">Este barbero aún no tiene horarios. Mientras no tenga, los clientes no podrán reservar con él.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

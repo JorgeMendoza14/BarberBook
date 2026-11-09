@@ -7,7 +7,7 @@ from functools import wraps
 
 from flask import (
     Flask, render_template, request,
-    redirect, url_for, flash, session, abort
+    redirect, url_for, flash, session, abort, jsonify
 )
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import (
@@ -230,23 +230,18 @@ def validar_datos_cita(cursor, formulario, id_cita_actual=None):
         return None, "La cita debe terminar el mismo día."
     hora_fin = fin.time()
 
-    # Horario de trabajo del barbero (1 = lunes ... 7 = domingo).
-    # Si el barbero aun no tiene horarios registrados no se valida.
+    # La cita debe estar dentro del horario de trabajo del barbero
+    # (1 = lunes ... 7 = domingo)
     cursor.execute(
-        "SELECT COUNT(*) AS total FROM horarios WHERE id_barbero = %s",
-        (id_barbero,)
+        """
+        SELECT id_horario FROM horarios
+        WHERE id_barbero = %s AND dia_semana = %s
+          AND hora_inicio <= %s AND hora_fin >= %s
+        """,
+        (id_barbero, fecha.isoweekday(), hora_inicio, hora_fin)
     )
-    if cursor.fetchone()["total"] > 0:
-        cursor.execute(
-            """
-            SELECT id_horario FROM horarios
-            WHERE id_barbero = %s AND dia_semana = %s
-              AND hora_inicio <= %s AND hora_fin >= %s
-            """,
-            (id_barbero, fecha.isoweekday(), hora_inicio, hora_fin)
-        )
-        if not cursor.fetchone():
-            return None, "El barbero no atiende en ese día u horario."
+    if not cursor.fetchone():
+        return None, "El barbero no atiende en ese día u horario."
 
     # El barbero no debe tener un bloqueo en ese horario
     cursor.execute(
@@ -281,14 +276,113 @@ def validar_datos_cita(cursor, formulario, id_cita_actual=None):
     return datos, None
 
 
+DIAS_SEMANA = {
+    1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves",
+    5: "Viernes", 6: "Sábado", 7: "Domingo"
+}
+
+# Cada cuantos minutos se ofrece una hora para reservar
+INTERVALO_MINUTOS = 30
+
+
+# MySQL devuelve las columnas TIME como timedelta.
+# Esta funcion lo pasa a minutos desde las 00:00 para poder comparar.
+def a_minutos(valor):
+    if isinstance(valor, timedelta):
+        return int(valor.total_seconds() // 60)
+    return valor.hour * 60 + valor.minute
+
+
+def minutos_a_texto(minutos):
+    return f"{minutos // 60:02d}:{minutos % 60:02d}"
+
+
+# Horario semanal de un barbero, listo para mostrar en pantalla
+def obtener_horario_semana(cursor, id_barbero):
+    cursor.execute(
+        """
+        SELECT dia_semana, hora_inicio, hora_fin
+        FROM horarios
+        WHERE id_barbero = %s
+        ORDER BY dia_semana, hora_inicio
+        """,
+        (id_barbero,)
+    )
+    return [
+        {
+            "dia": DIAS_SEMANA[fila["dia_semana"]],
+            "inicio": minutos_a_texto(a_minutos(fila["hora_inicio"])),
+            "fin": minutos_a_texto(a_minutos(fila["hora_fin"])),
+        }
+        for fila in cursor.fetchall()
+    ]
+
+
+# Calcula las horas libres de un barbero en una fecha:
+# toma su horario de ese dia y quita las horas que chocan con
+# otras citas o con bloqueos.
+def calcular_horas_disponibles(cursor, id_barbero, fecha, duracion,
+                               id_cita_actual=None):
+    cursor.execute(
+        """
+        SELECT hora_inicio, hora_fin FROM horarios
+        WHERE id_barbero = %s AND dia_semana = %s
+        ORDER BY hora_inicio
+        """,
+        (id_barbero, fecha.isoweekday())
+    )
+    turnos = cursor.fetchall()
+
+    # Horas ocupadas: citas pendientes/confirmadas y bloqueos
+    cursor.execute(
+        """
+        SELECT hora_inicio, hora_fin FROM citas
+        WHERE id_barbero = %s AND fecha = %s
+          AND estado IN ('pendiente', 'confirmada')
+          AND id_cita <> %s
+        UNION ALL
+        SELECT hora_inicio, hora_fin FROM bloqueos_horario
+        WHERE id_barbero = %s AND fecha = %s
+        """,
+        (id_barbero, fecha, id_cita_actual or 0, id_barbero, fecha)
+    )
+    ocupadas = [
+        (a_minutos(fila["hora_inicio"]), a_minutos(fila["hora_fin"]))
+        for fila in cursor.fetchall()
+    ]
+
+    ahora = datetime.now()
+    minimo = -1
+    if fecha == ahora.date():
+        minimo = ahora.hour * 60 + ahora.minute
+    elif fecha < ahora.date():
+        return []
+
+    horas = []
+    for turno in turnos:
+        inicio = a_minutos(turno["hora_inicio"])
+        fin = a_minutos(turno["hora_fin"])
+        while inicio + duracion <= fin:
+            termina = inicio + duracion
+            libre = all(
+                not (inicio < o_fin and termina > o_inicio)
+                for o_inicio, o_fin in ocupadas
+            )
+            if libre and inicio > minimo:
+                horas.append(minutos_a_texto(inicio))
+            inicio += INTERVALO_MINUTOS
+    return horas
+
+
 # Pagina principal
 @app.route("/")
 def inicio():
     servicios = []
+    barberos = []
     conexion = None
     cursor = None
 
-    # Los servicios de la portada se leen de la base de datos
+    # Los servicios y barberos de la portada se leen de la base de datos
     try:
         conexion = obtener_conexion()
         cursor = conexion.cursor(dictionary=True)
@@ -301,15 +395,33 @@ def inicio():
             """
         )
         servicios = cursor.fetchall()
+
+        cursor.execute(
+            """
+            SELECT b.id_barbero, u.nombre, u.apellido,
+                   b.especialidad, b.descripcion
+            FROM barberos b
+            INNER JOIN usuarios u ON u.id_usuario = b.id_usuario
+            WHERE b.activo = TRUE
+            ORDER BY u.nombre
+            """
+        )
+        barberos = cursor.fetchall()
+        for barbero in barberos:
+            barbero["horario"] = obtener_horario_semana(
+                cursor, barbero["id_barbero"]
+            )
     except Exception:
-        app.logger.exception("Error al cargar los servicios de la portada")
+        app.logger.exception("Error al cargar los datos de la portada")
     finally:
         if cursor:
             cursor.close()
         if conexion and conexion.is_connected():
             conexion.close()
 
-    return render_template("index.html", servicios=servicios)
+    return render_template(
+        "index.html", servicios=servicios, barberos=barberos
+    )
 
 
 # Registro de clientes
@@ -1273,6 +1385,229 @@ def cambiar_estado_barbero(id_barbero):
         if conexion and conexion.is_connected():
             conexion.close()
     return redirect(url_for("administrar_barberos"))
+
+
+# Devuelve en JSON las horas libres de un barbero para una fecha.
+# La usa el formulario de reserva (static/js/reservas.js).
+@app.route("/citas/disponibilidad")
+@cliente_requerido
+def disponibilidad():
+    try:
+        id_barbero = int(request.args.get("id_barbero", ""))
+        id_servicio = int(request.args.get("id_servicio", ""))
+        fecha = date.fromisoformat(request.args.get("fecha", ""))
+        id_cita = int(request.args.get("id_cita") or 0)
+    except ValueError:
+        return jsonify({"horas": [], "horario": [],
+                        "mensaje": "Elige barbero, servicio y fecha."})
+
+    conexion = None
+    cursor = None
+    try:
+        conexion = obtener_conexion()
+        cursor = conexion.cursor(dictionary=True)
+
+        cursor.execute(
+            """
+            SELECT duracion_minutos FROM servicios
+            WHERE id_servicio = %s AND activo = TRUE
+            """,
+            (id_servicio,)
+        )
+        servicio = cursor.fetchone()
+        if not servicio:
+            return jsonify({"horas": [], "horario": [],
+                            "mensaje": "El servicio no está disponible."})
+
+        horario = obtener_horario_semana(cursor, id_barbero)
+        horas = calcular_horas_disponibles(
+            cursor, id_barbero, fecha,
+            servicio["duracion_minutos"], id_cita
+        )
+
+        dias_que_atiende = [turno["dia"] for turno in horario]
+        if not horario:
+            mensaje = "Este barbero aún no tiene horarios registrados."
+        elif DIAS_SEMANA[fecha.isoweekday()] not in dias_que_atiende:
+            mensaje = "El barbero no atiende ese día. Prueba con otra fecha."
+        elif not horas:
+            mensaje = "No hay horas libres ese día. Prueba con otra fecha."
+        else:
+            mensaje = ""
+
+        return jsonify({"horas": horas, "horario": horario,
+                        "mensaje": mensaje})
+
+    except Exception:
+        app.logger.exception("Error al consultar la disponibilidad")
+        return jsonify({"horas": [], "horario": [],
+                        "mensaje": "No se pudo consultar la disponibilidad."}), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+
+
+# Horarios de trabajo de un barbero (solo administrador)
+@app.route("/admin/barberos/<int:id_barbero>/horarios", methods=["GET", "POST"])
+@administrador_requerido
+def administrar_horarios(id_barbero):
+    conexion = None
+    cursor = None
+
+    try:
+        conexion = obtener_conexion()
+        cursor = conexion.cursor(dictionary=True)
+
+        cursor.execute(
+            """
+            SELECT b.id_barbero, u.nombre, u.apellido, b.especialidad
+            FROM barberos b
+            INNER JOIN usuarios u ON u.id_usuario = b.id_usuario
+            WHERE b.id_barbero = %s
+            """,
+            (id_barbero,)
+        )
+        barbero = cursor.fetchone()
+        if not barbero:
+            abort(404)
+
+        if request.method == "POST":
+            validar_token_csrf()
+            try:
+                dias = [int(dia) for dia in request.form.getlist("dias")]
+                inicio = datetime.strptime(
+                    request.form.get("hora_inicio", ""), "%H:%M"
+                ).time()
+                fin = datetime.strptime(
+                    request.form.get("hora_fin", ""), "%H:%M"
+                ).time()
+            except ValueError:
+                dias, inicio, fin = [], None, None
+
+            if not dias or not all(dia in DIAS_SEMANA for dia in dias):
+                flash("Selecciona al menos un día.", "error")
+            elif not inicio or not fin or inicio >= fin:
+                flash("La hora de inicio debe ser menor que la hora de fin.", "error")
+            else:
+                agregados = 0
+                for dia in dias:
+                    # No se permiten dos turnos que se crucen el mismo dia
+                    cursor.execute(
+                        """
+                        SELECT id_horario FROM horarios
+                        WHERE id_barbero = %s AND dia_semana = %s
+                          AND hora_inicio < %s AND hora_fin > %s
+                        """,
+                        (id_barbero, dia, fin, inicio)
+                    )
+                    if cursor.fetchone():
+                        continue
+                    cursor.execute(
+                        """
+                        INSERT INTO horarios
+                            (id_barbero, dia_semana, hora_inicio, hora_fin)
+                        VALUES (%s, %s, %s, %s)
+                        """,
+                        (id_barbero, dia, inicio, fin)
+                    )
+                    agregados += 1
+                conexion.commit()
+
+                if agregados == len(dias):
+                    flash("Horario registrado correctamente.", "success")
+                elif agregados:
+                    flash("Se registró el horario, pero algunos días ya "
+                          "tenían un turno que se cruzaba.", "success")
+                else:
+                    flash("Esos días ya tienen un turno que se cruza.", "error")
+
+            return redirect(
+                url_for("administrar_horarios", id_barbero=id_barbero)
+            )
+
+        cursor.execute(
+            """
+            SELECT id_horario, dia_semana,
+                   TIME_FORMAT(hora_inicio, '%H:%i') AS hora_inicio,
+                   TIME_FORMAT(hora_fin, '%H:%i') AS hora_fin
+            FROM horarios
+            WHERE id_barbero = %s
+            ORDER BY dia_semana, hora_inicio
+            """,
+            (id_barbero,)
+        )
+        horarios = cursor.fetchall()
+
+        return render_template(
+            "admin_horarios.html",
+            barbero=barbero,
+            horarios=horarios,
+            dias=DIAS_SEMANA
+        )
+
+    except HTTPException:
+        raise
+    except Exception:
+        if conexion:
+            conexion.rollback()
+        app.logger.exception("Error al administrar horarios")
+        flash("No se pudieron cargar los horarios.", "error")
+        return redirect(url_for("administrar_barberos"))
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+
+
+@app.route("/admin/horarios/<int:id_horario>/eliminar", methods=["POST"])
+@administrador_requerido
+def eliminar_horario(id_horario):
+    validar_token_csrf()
+    conexion = None
+    cursor = None
+    id_barbero = None
+
+    try:
+        conexion = obtener_conexion()
+        cursor = conexion.cursor()
+        cursor.execute(
+            "SELECT id_barbero FROM horarios WHERE id_horario = %s",
+            (id_horario,)
+        )
+        fila = cursor.fetchone()
+        if not fila:
+            abort(404)
+        id_barbero = fila[0]
+
+        cursor.execute(
+            "DELETE FROM horarios WHERE id_horario = %s",
+            (id_horario,)
+        )
+        conexion.commit()
+        flash("Turno eliminado.", "success")
+
+    except HTTPException:
+        raise
+    except Exception:
+        if conexion:
+            conexion.rollback()
+        app.logger.exception("Error al eliminar un horario")
+        flash("No se pudo eliminar el turno.", "error")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+
+    if id_barbero is None:
+        return redirect(url_for("administrar_barberos"))
+    return redirect(url_for("administrar_horarios", id_barbero=id_barbero))
 
 
 # Cerrar sesion

@@ -30,11 +30,17 @@
     <input type="date" name="fecha" min="{{ hoy }}" required
            value="{{ cita.fecha if cita else '' }}">
 </label>
-<label>
-    Hora
-    <input type="time" name="hora" required
-           value="{{ cita.hora if cita else '' }}">
-</label>
+<div class="admin-field-wide campo-horas">
+    <span class="campo-titulo">Hora disponible</span>
+    {# La hora elegida se guarda en este campo oculto (lo llena reservas.js) #}
+    <input type="hidden" name="hora" value="{{ cita.hora if cita else '' }}">
+    <div class="horas-grid" id="horas-disponibles"
+         data-url="{{ url_for('disponibilidad') }}"
+         data-id-cita="{{ cita.id_cita if cita else '' }}">
+        <p class="horas-mensaje">Elige barbero, servicio y fecha para ver las horas libres.</p>
+    </div>
+    <div class="horario-barbero" id="horario-barbero"></div>
+</div>
 <label class="admin-field-wide">
     Observaciones
     <textarea name="observaciones" rows="3"

@@ -122,6 +122,8 @@
                                     <div class="admin-row-actions">
                                         <a class="action-button action-edit"
                                            href="{{ url_for('editar_barbero', id_barbero=barbero.id_barbero) }}">Editar</a>
+                                        <a class="action-button action-edit"
+                                           href="{{ url_for('administrar_horarios', id_barbero=barbero.id_barbero) }}">Horarios</a>
                                         <form action="{{ url_for('cambiar_estado_barbero', id_barbero=barbero.id_barbero) }}" method="POST">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                             <button class="action-button {% if barbero.activo %}action-reject{% else %}action-accept{% endif %}" type="submit">

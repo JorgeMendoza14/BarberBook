@@ -27,7 +27,7 @@
                 </div>
                 <a class="admin-secondary-link" href="{{ url_for('panel_cliente') }}">Cancelar</a>
             </div>
-            <form class="admin-form-grid"
+            <form class="admin-form-grid" data-reserva
                   action="{{ url_for('actualizar_cita_cliente', id_cita=cita.id_cita) }}" method="POST">
                 {% include "_formulario_cita.html" %}
                 <div class="admin-form-actions admin-field-wide">
@@ -36,5 +36,6 @@
             </form>
         </section>
     </main>
+    <script src="{{ url_for('static', filename='js/reservas.js') }}"></script>
 </body>
 </html>

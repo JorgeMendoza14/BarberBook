@@ -802,3 +802,452 @@ footer {
         grid-column: auto;
     }
 }
+
+
+/* ============================================================
+   PORTADA (index.html)
+   ============================================================ */
+html {
+    scroll-behavior: smooth;
+}
+
+.portada-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(16, 16, 16, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #222;
+}
+
+.portada .etiqueta {
+    letter-spacing: 3px;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.hero-portada {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: 40px;
+    padding: 70px 8% 60px;
+    background:
+        radial-gradient(circle at 80% 40%, rgba(212, 175, 55, 0.12), transparent 55%),
+        linear-gradient(135deg, #1a1712 0%, #101010 60%);
+}
+
+.hero-texto h1 {
+    font-size: clamp(38px, 6vw, 64px);
+    line-height: 1.08;
+    margin-bottom: 20px;
+}
+
+.hero-texto h1 span {
+    color: var(--dorado);
+}
+
+.hero-texto > p:not(.etiqueta) {
+    color: var(--gris);
+    font-size: 18px;
+    line-height: 1.6;
+    max-width: 520px;
+    margin-bottom: 30px;
+}
+
+.hero-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.hero-imagen img {
+    width: 100%;
+    max-width: 440px;
+    display: block;
+    margin: 0 auto;
+    animation: flotar 6s ease-in-out infinite;
+}
+
+@keyframes flotar {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+.ventajas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 0 8%;
+    margin-top: -30px;
+    position: relative;
+}
+
+.ventajas article {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--tarjeta);
+    border: 1px solid #2c2c2c;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.ventajas img {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+.ventajas h3 {
+    font-size: 17px;
+    margin-bottom: 4px;
+}
+
+.ventajas p {
+    color: var(--gris);
+    font-size: 14px;
+}
+
+.seccion {
+    padding: 80px 8%;
+    text-align: center;
+}
+
+.seccion h2 {
+    font-size: 36px;
+    margin-bottom: 40px;
+}
+
+.seccion-oscura {
+    background: #151515;
+}
+
+.portada .servicios-grid {
+    text-align: left;
+}
+
+.portada .servicio {
+    border: 1px solid #2c2c2c;
+    border-radius: 14px;
+    padding: 28px;
+    transition: transform 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.portada .servicio:hover {
+    transform: translateY(-6px);
+    border-color: var(--dorado);
+}
+
+.servicio-icono {
+    width: 64px;
+    height: 64px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: rgba(212, 175, 55, 0.1);
+    margin-bottom: 18px;
+}
+
+.servicio-icono img {
+    width: 40px;
+    height: 40px;
+}
+
+.portada .servicio p {
+    flex-grow: 1;
+}
+
+.servicio-pie {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid #2c2c2c;
+    padding-top: 14px;
+    margin-top: 10px;
+}
+
+.servicio-pie span {
+    color: var(--gris);
+    font-size: 14px;
+}
+
+.barberos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    text-align: left;
+}
+
+.barbero-card {
+    background: var(--tarjeta);
+    border: 1px solid #2c2c2c;
+    border-radius: 14px;
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+}
+
+.barbero-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.barbero-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #111;
+    background: linear-gradient(135deg, #f3d778, #b08a1e);
+    flex-shrink: 0;
+}
+
+.barbero-cabecera h3 {
+    font-size: 20px;
+}
+
+.barbero-especialidad {
+    color: var(--dorado);
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.barbero-descripcion {
+    color: var(--gris);
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.barbero-card h4 {
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gris);
+    margin-bottom: 10px;
+}
+
+.horario-lista {
+    list-style: none;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+.horario-lista li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed #333;
+    font-size: 15px;
+}
+
+.horario-lista li span:last-child {
+    color: var(--dorado);
+    font-variant-numeric: tabular-nums;
+}
+
+.btn-bloque {
+    display: block;
+    text-align: center;
+    margin-top: auto;
+}
+
+.texto-vacio {
+    color: var(--gris);
+}
+
+.barbero-card .texto-vacio {
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+.cta-reservar {
+    margin: 80px 8%;
+    padding: 44px;
+    border-radius: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(212, 175, 55, 0.04));
+    border: 1px solid rgba(212, 175, 55, 0.35);
+}
+
+.cta-reservar h2 {
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+.cta-reservar p {
+    color: var(--gris);
+}
+
+.cta-reservar .reservar-acciones {
+    margin-top: 0;
+}
+
+.portada-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 40px 8% 24px;
+    border-top: 1px solid #222;
+    text-align: left;
+}
+
+.portada-footer p,
+.portada-footer a:not(.logo) {
+    color: var(--gris);
+    text-decoration: none;
+    display: block;
+    margin-top: 8px;
+}
+
+.portada-footer h4 {
+    color: var(--blanco);
+}
+
+.footer-copy {
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid #222;
+    padding-top: 20px;
+}
+
+@media (max-width: 860px) {
+    .portada-header {
+        position: static;
+    }
+
+    .hero-portada {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-top: 40px;
+    }
+
+    .hero-texto > p:not(.etiqueta) {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-acciones {
+        justify-content: center;
+    }
+
+    .hero-imagen img {
+        max-width: 280px;
+    }
+
+    .ventajas {
+        grid-template-columns: 1fr;
+        margin-top: 0;
+    }
+
+    .cta-reservar {
+        margin: 50px 16px;
+        padding: 28px;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+
+/* ============================================================
+   HORAS DISPONIBLES (formulario de reserva)
+   ============================================================ */
+.barber-dashboard .campo-titulo {
+    display: block;
+    color: #e3e3e3;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.barber-dashboard .horas-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-height: 44px;
+    align-items: center;
+}
+
+.barber-dashboard .horas-mensaje {
+    color: #9a9a9a;
+    font-size: 14px;
+}
+
+.barber-dashboard .hora-opcion {
+    min-width: 76px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #424242;
+    background: #101010;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.barber-dashboard .hora-opcion:hover {
+    border-color: #d4af37;
+}
+
+.barber-dashboard .hora-opcion.activa {
+    background: #d4af37;
+    border-color: #d4af37;
+    color: #111;
+    font-weight: bold;
+}
+
+.barber-dashboard .horario-barbero {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #9a9a9a;
+}
+
+.barber-dashboard .horario-chip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(212, 175, 55, 0.12);
+    color: #d4af37;
+}
+
+/* Gestion de horarios (admin) */
+.barber-dashboard .dias-semana {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.barber-dashboard .dia-opcion {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px !important;
+    padding: 10px 14px;
+    border: 1px solid #424242;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 400 !important;
+}
+
+.barber-dashboard .dia-opcion input {
+    width: auto !important;
+    min-height: 0 !important;
+    accent-color: #d4af37;
+}

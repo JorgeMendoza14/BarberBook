@@ -27,7 +27,7 @@
                 </div>
             </div>
             {% if barberos and servicios %}
-                <form class="admin-form-grid" action="{{ url_for('agregar_cita') }}" method="POST">
+                <form class="admin-form-grid" data-reserva action="{{ url_for('agregar_cita') }}" method="POST">
                     {% set cita = None %}
                     {% include "_formulario_cita.html" %}
                     <div class="admin-form-actions admin-field-wide">
@@ -98,5 +98,6 @@
             </div>
         </section>
     </main>
+    <script src="{{ url_for('static', filename='js/reservas.js') }}"></script>
 </body>
 </html>

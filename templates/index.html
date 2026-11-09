@@ -6,7 +6,7 @@
     <title>BarberBook | Tu barbería</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
+<body class="portada">
 
     {# A donde lleva el boton "Reservar" segun quien este conectado #}
     {% if session.get('rol') == 'cliente' %}
@@ -17,13 +17,22 @@
         {% set url_panel = url_for('login') %}
     {% endif %}
 
-    <header>
+    {# Icono de cada servicio segun su nombre #}
+    {% macro icono_servicio(nombre) -%}
+        {%- set n = nombre|lower -%}
+        {%- if '+' in n or 'combo' in n or 'completo' in n -%}combo
+        {%- elif 'barba' in n or 'afeit' in n -%}navaja
+        {%- elif 'fade' in n or 'degrad' in n or 'máquina' in n -%}maquina
+        {%- else -%}tijeras{%- endif -%}
+    {%- endmacro %}
+
+    <header class="portada-header">
         <nav class="navbar">
             <a href="{{ url_for('inicio') }}" class="logo">💈 Barber<span>Book</span></a>
 
             <div class="nav-links">
-                <a href="{{ url_for('inicio') }}">Inicio</a>
                 <a href="#servicios">Servicios</a>
+                <a href="#barberos">Barberos</a>
                 <a href="#contacto">Contacto</a>
                 {% if session.get('id_usuario') %}
                     <a href="{{ url_panel }}" class="btn">Mi panel</a>
@@ -46,52 +55,145 @@
             {% endfor %}
         {% endwith %}
 
-        <section class="hero">
-            <div class="hero-content">
+        <!-- PORTADA -->
+        <section class="hero-portada">
+            <div class="hero-texto">
                 <p class="etiqueta">ESTILO Y PRECISIÓN</p>
-                <h1>Tu estilo comienza aquí.</h1>
+                <h1>Tu estilo comienza <span>aquí.</span></h1>
                 <p>
-                    Reserva tu próximo corte de cabello
-                    de manera fácil, rápida y segura.
+                    Reserva tu próximo corte en segundos. Elige a tu barbero,
+                    mira sus horas libres y confirma tu cita sin llamadas ni filas.
                 </p>
-                <a href="{{ url_panel }}" class="btn">Reservar mi cita</a>
+                <div class="hero-acciones">
+                    <a href="{{ url_panel }}" class="btn">Reservar mi cita</a>
+                    <a href="#servicios" class="btn btn-outline">Ver servicios</a>
+                </div>
+            </div>
+            <div class="hero-imagen">
+                <img src="{{ url_for('static', filename='img/hero.svg') }}" alt="Poste de barbería, tijeras y peine">
             </div>
         </section>
 
-        <section id="servicios" class="servicios">
+        <!-- VENTAJAS -->
+        <section class="ventajas">
+            <article>
+                <img src="{{ url_for('static', filename='img/calendario.svg') }}" alt="">
+                <div>
+                    <h3>Reserva en línea</h3>
+                    <p>Agenda desde tu celular a cualquier hora.</p>
+                </div>
+            </article>
+            <article>
+                <img src="{{ url_for('static', filename='img/reloj.svg') }}" alt="">
+                <div>
+                    <h3>Horas en tiempo real</h3>
+                    <p>Solo ves las horas que están libres.</p>
+                </div>
+            </article>
+            <article>
+                <img src="{{ url_for('static', filename='img/estrella.svg') }}" alt="">
+                <div>
+                    <h3>Barberos expertos</h3>
+                    <p>Cada uno con su especialidad.</p>
+                </div>
+            </article>
+        </section>
+
+        <!-- SERVICIOS -->
+        <section id="servicios" class="seccion">
+            <p class="etiqueta">LO QUE HACEMOS</p>
             <h2>Nuestros servicios</h2>
 
             <div class="servicios-grid">
                 {% for servicio in servicios %}
                     <article class="servicio">
+                        <div class="servicio-icono">
+                            <img src="{{ url_for('static', filename='img/' ~ icono_servicio(servicio.nombre) ~ '.svg') }}" alt="">
+                        </div>
                         <h3>{{ servicio.nombre }}</h3>
                         <p>{{ servicio.descripcion or 'Servicio profesional de barbería.' }}</p>
-                        <p>{{ servicio.duracion_minutos }} min</p>
-                        <strong>${{ '%.2f'|format(servicio.precio) }}</strong>
+                        <div class="servicio-pie">
+                            <strong>${{ '%.2f'|format(servicio.precio) }}</strong>
+                            <span>{{ servicio.duracion_minutos }} min</span>
+                        </div>
                     </article>
                 {% else %}
-                    <p>Pronto publicaremos nuestros servicios.</p>
+                    <p class="texto-vacio">Pronto publicaremos nuestros servicios.</p>
                 {% endfor %}
             </div>
         </section>
 
-        <section id="reservar" class="reservar">
-            <h2>Agenda tu próximo corte</h2>
-            {% if session.get('id_usuario') %}
-                <p>Ya iniciaste sesión, entra a tu panel para gestionar tus citas.</p>
-                <a href="{{ url_panel }}" class="btn">Ir a mi panel</a>
-            {% else %}
-                <p>Crea tu cuenta gratis o inicia sesión para reservar en línea.</p>
-                <div class="reservar-acciones">
+        <!-- BARBEROS Y HORARIOS -->
+        <section id="barberos" class="seccion seccion-oscura">
+            <p class="etiqueta">NUESTRO EQUIPO</p>
+            <h2>Barberos y horarios</h2>
+
+            <div class="barberos-grid">
+                {% for barbero in barberos %}
+                    <article class="barbero-card">
+                        <div class="barbero-cabecera">
+                            <div class="barbero-avatar">{{ barbero.nombre[0] }}{{ barbero.apellido[0] }}</div>
+                            <div>
+                                <h3>{{ barbero.nombre }} {{ barbero.apellido }}</h3>
+                                <p class="barbero-especialidad">{{ barbero.especialidad or 'Barbero profesional' }}</p>
+                            </div>
+                        </div>
+                        {% if barbero.descripcion %}
+                            <p class="barbero-descripcion">{{ barbero.descripcion }}</p>
+                        {% endif %}
+
+                        <h4>Horario de atención</h4>
+                        {% if barbero.horario %}
+                            <ul class="horario-lista">
+                                {% for turno in barbero.horario %}
+                                    <li><span>{{ turno.dia }}</span><span>{{ turno.inicio }} – {{ turno.fin }}</span></li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="texto-vacio">Horario por confirmar.</p>
+                        {% endif %}
+
+                        <a href="{{ url_panel }}" class="btn btn-outline btn-bloque">Reservar con {{ barbero.nombre }}</a>
+                    </article>
+                {% else %}
+                    <p class="texto-vacio">Pronto conocerás a nuestro equipo.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- LLAMADO A RESERVAR -->
+        <section id="reservar" class="cta-reservar">
+            <div>
+                <h2>¿Listo para tu próximo corte?</h2>
+                {% if session.get('id_usuario') %}
+                    <p>Entra a tu panel para reservar o revisar tus citas.</p>
+                {% else %}
+                    <p>Crea tu cuenta gratis y reserva en menos de un minuto.</p>
+                {% endif %}
+            </div>
+            <div class="reservar-acciones">
+                {% if session.get('id_usuario') %}
+                    <a href="{{ url_panel }}" class="btn">Ir a mi panel</a>
+                {% else %}
                     <a href="{{ url_for('registro') }}" class="btn">Crear cuenta</a>
                     <a href="{{ url_for('login') }}" class="btn btn-outline">Ya tengo cuenta</a>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </section>
     </main>
 
-    <footer id="contacto">
-        <p>© 2026 BarberBook. Todos los derechos reservados.</p>
+    <footer id="contacto" class="portada-footer">
+        <div>
+            <a href="{{ url_for('inicio') }}" class="logo">💈 Barber<span>Book</span></a>
+            <p>Sistema de reservas para barbería.</p>
+        </div>
+        <div>
+            <h4>Enlaces</h4>
+            <a href="#servicios">Servicios</a>
+            <a href="#barberos">Barberos</a>
+            <a href="{{ url_for('login') }}">Iniciar sesión</a>
+        </div>
+        <p class="footer-copy">© 2026 BarberBook. Todos los derechos reservados.</p>
     </footer>
 
 </body>
