@@ -1,0 +1,19 @@
+<header class="dashboard-header">
+    <a class="dashboard-brand" href="{{ url_for('panel_cliente') }}">
+        Barber<span>Book</span>
+    </a>
+    <nav class="dashboard-nav" aria-label="Navegación principal">
+        <a class="is-active" href="{{ url_for('panel_cliente') }}">Mis citas</a>
+        <a href="{{ url_for('inicio') }}">Inicio</a>
+    </nav>
+    <div class="dashboard-user">
+        <div>
+            <span class="dashboard-user-label">Cliente</span>
+            <strong>{{ session.get('nombre', 'Usuario') }}</strong>
+        </div>
+        <form action="{{ url_for('logout') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="dashboard-logout" type="submit">Cerrar sesión</button>
+        </form>
+    </div>
+</header>

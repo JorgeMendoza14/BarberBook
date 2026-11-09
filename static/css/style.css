@@ -449,6 +449,7 @@ footer {
 }
 
 .barber-dashboard .admin-form-grid input,
+.barber-dashboard .admin-form-grid select,
 .barber-dashboard .admin-form-grid textarea {
     width: 100%;
     min-height: 44px;
@@ -467,6 +468,7 @@ footer {
 }
 
 .barber-dashboard .admin-form-grid input:focus,
+.barber-dashboard .admin-form-grid select:focus,
 .barber-dashboard .admin-form-grid textarea:focus {
     outline: 2px solid #d4af37;
     outline-offset: 1px;

@@ -1,0 +1,42 @@
+{# Formulario compartido por "Reservar" y "Editar".
+   Si llega la variable cita, los campos se llenan con sus datos. #}
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label>
+    Barbero
+    <select name="id_barbero" required>
+        <option value="">Selecciona un barbero</option>
+        {% for barbero in barberos %}
+            <option value="{{ barbero.id_barbero }}"
+                {% if cita and cita.id_barbero == barbero.id_barbero %}selected{% endif %}>
+                {{ barbero.nombre }}{% if barbero.especialidad %} — {{ barbero.especialidad }}{% endif %}
+            </option>
+        {% endfor %}
+    </select>
+</label>
+<label>
+    Servicio
+    <select name="id_servicio" required>
+        <option value="">Selecciona un servicio</option>
+        {% for servicio in servicios %}
+            <option value="{{ servicio.id_servicio }}"
+                {% if cita and cita.id_servicio == servicio.id_servicio %}selected{% endif %}>
+                {{ servicio.nombre }} — ${{ '%.2f'|format(servicio.precio) }} ({{ servicio.duracion_minutos }} min)
+            </option>
+        {% endfor %}
+    </select>
+</label>
+<label>
+    Fecha
+    <input type="date" name="fecha" min="{{ hoy }}" required
+           value="{{ cita.fecha if cita else '' }}">
+</label>
+<label>
+    Hora
+    <input type="time" name="hora" required
+           value="{{ cita.hora if cita else '' }}">
+</label>
+<label class="admin-field-wide">
+    Observaciones
+    <textarea name="observaciones" rows="3"
+              placeholder="Ej: corte bajo a los lados">{{ cita.observaciones if cita and cita.observaciones else '' }}</textarea>
+</label>

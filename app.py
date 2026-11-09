@@ -1,6 +1,7 @@
 
 import os
 import secrets
+from datetime import date, datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from functools import wraps
 
@@ -40,6 +41,16 @@ def administrador_requerido(funcion):
     @login_requerido
     def decorador(*args, **kwargs):
         if session.get("rol") != "administrador":
+            abort(403)
+        return funcion(*args, **kwargs)
+    return decorador
+
+
+def cliente_requerido(funcion):
+    @wraps(funcion)
+    @login_requerido
+    def decorador(*args, **kwargs):
+        if session.get("rol") != "cliente":
             abort(403)
         return funcion(*args, **kwargs)
     return decorador
@@ -141,6 +152,132 @@ def validar_datos_barbero(formulario, incluir_contrasena=False):
     datos = (nombre, apellido, correo, telefono or None, especialidad or None)
     if incluir_contrasena:
         datos += (contrasena,)
+    return datos, None
+
+
+# Barberos y servicios activos para llenar los <select> del formulario
+def obtener_opciones_cita(cursor):
+    cursor.execute(
+        """
+        SELECT b.id_barbero, CONCAT(u.nombre, ' ', u.apellido) AS nombre,
+               b.especialidad
+        FROM barberos b
+        INNER JOIN usuarios u ON u.id_usuario = b.id_usuario
+        WHERE b.activo = TRUE
+        ORDER BY u.nombre, u.apellido
+        """
+    )
+    barberos = cursor.fetchall()
+
+    cursor.execute(
+        """
+        SELECT id_servicio, nombre, precio, duracion_minutos
+        FROM servicios
+        WHERE activo = TRUE
+        ORDER BY nombre
+        """
+    )
+    servicios = cursor.fetchall()
+    return barberos, servicios
+
+
+# Revisa que la cita se pueda guardar. Devuelve (datos, error).
+# id_cita_actual se usa al editar, para no chocar la cita consigo misma.
+def validar_datos_cita(cursor, formulario, id_cita_actual=None):
+    observaciones = formulario.get("observaciones", "").strip()
+
+    try:
+        id_barbero = int(formulario.get("id_barbero", ""))
+        id_servicio = int(formulario.get("id_servicio", ""))
+    except ValueError:
+        return None, "Selecciona un barbero y un servicio."
+
+    try:
+        fecha = date.fromisoformat(formulario.get("fecha", ""))
+        hora_inicio = datetime.strptime(
+            formulario.get("hora", ""), "%H:%M"
+        ).time()
+    except ValueError:
+        return None, "Ingresa una fecha y una hora válidas."
+
+    inicio = datetime.combine(fecha, hora_inicio)
+    if inicio <= datetime.now():
+        return None, "La cita debe ser en una fecha y hora futura."
+
+    # El servicio debe existir y estar activo
+    cursor.execute(
+        """
+        SELECT duracion_minutos FROM servicios
+        WHERE id_servicio = %s AND activo = TRUE
+        """,
+        (id_servicio,)
+    )
+    servicio = cursor.fetchone()
+    if not servicio:
+        return None, "El servicio seleccionado no está disponible."
+
+    # El barbero debe existir y estar activo
+    cursor.execute(
+        "SELECT id_barbero FROM barberos WHERE id_barbero = %s AND activo = TRUE",
+        (id_barbero,)
+    )
+    if not cursor.fetchone():
+        return None, "El barbero seleccionado no está disponible."
+
+    # La hora de fin depende de cuanto dura el servicio
+    fin = inicio + timedelta(minutes=servicio["duracion_minutos"])
+    if fin.date() != fecha:
+        return None, "La cita debe terminar el mismo día."
+    hora_fin = fin.time()
+
+    # Horario de trabajo del barbero (1 = lunes ... 7 = domingo).
+    # Si el barbero aun no tiene horarios registrados no se valida.
+    cursor.execute(
+        "SELECT COUNT(*) AS total FROM horarios WHERE id_barbero = %s",
+        (id_barbero,)
+    )
+    if cursor.fetchone()["total"] > 0:
+        cursor.execute(
+            """
+            SELECT id_horario FROM horarios
+            WHERE id_barbero = %s AND dia_semana = %s
+              AND hora_inicio <= %s AND hora_fin >= %s
+            """,
+            (id_barbero, fecha.isoweekday(), hora_inicio, hora_fin)
+        )
+        if not cursor.fetchone():
+            return None, "El barbero no atiende en ese día u horario."
+
+    # El barbero no debe tener un bloqueo en ese horario
+    cursor.execute(
+        """
+        SELECT id_bloqueo FROM bloqueos_horario
+        WHERE id_barbero = %s AND fecha = %s
+          AND hora_inicio < %s AND hora_fin > %s
+        """,
+        (id_barbero, fecha, hora_fin, hora_inicio)
+    )
+    if cursor.fetchone():
+        return None, "El barbero no está disponible en ese horario."
+
+    # No debe cruzarse con otra cita pendiente o confirmada del barbero
+    cursor.execute(
+        """
+        SELECT id_cita FROM citas
+        WHERE id_barbero = %s AND fecha = %s
+          AND estado IN ('pendiente', 'confirmada')
+          AND hora_inicio < %s AND hora_fin > %s
+          AND id_cita <> %s
+        """,
+        (id_barbero, fecha, hora_fin, hora_inicio, id_cita_actual or 0)
+    )
+    if cursor.fetchone():
+        return None, "Ese horario ya está ocupado. Elige otra hora."
+
+    datos = (
+        id_barbero, id_servicio, fecha,
+        hora_inicio, hora_fin, observaciones or None
+    )
     return datos, None
 
 
@@ -285,14 +422,286 @@ def login():
 
 
 # Panel privado del cliente
+# Funciona igual que la pagina principal del video: muestra el
+# formulario para agregar y la tabla con todos los registros.
 @app.route("/panel-cliente")
-@login_requerido
+@cliente_requerido
 def panel_cliente():
+    conexion = None
+    cursor = None
 
-    if session.get("rol") != "cliente":
-        return "Acceso no autorizado", 403
+    try:
+        conexion = obtener_conexion()
+        cursor = conexion.cursor(dictionary=True)
 
-    return render_template("panel_cliente.html")
+        cursor.execute(
+            """
+            SELECT
+                c.id_cita,
+                CONCAT(u.nombre, ' ', u.apellido) AS barbero,
+                s.nombre AS servicio,
+                s.precio,
+                DATE_FORMAT(c.fecha, '%d/%m/%Y') AS fecha,
+                TIME_FORMAT(c.hora_inicio, '%H:%i') AS hora,
+                c.estado,
+                c.observaciones
+            FROM citas c
+            INNER JOIN barberos b ON b.id_barbero = c.id_barbero
+            INNER JOIN usuarios u ON u.id_usuario = b.id_usuario
+            INNER JOIN servicios s ON s.id_servicio = c.id_servicio
+            WHERE c.id_cliente = %s
+            ORDER BY c.fecha DESC, c.hora_inicio DESC
+            """,
+            (session["id_usuario"],)
+        )
+        citas = cursor.fetchall()
+        barberos, servicios = obtener_opciones_cita(cursor)
+
+        return render_template(
+            "panel_cliente.html",
+            citas=citas,
+            barberos=barberos,
+            servicios=servicios,
+            hoy=date.today().isoformat()
+        )
+
+    except Exception:
+        app.logger.exception("Error al cargar el panel del cliente")
+        flash("No se pudo cargar tu panel. Inténtalo de nuevo.", "error")
+        return redirect(url_for("inicio"))
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+
+
+# Agregar una cita (en el video es la ruta /add_contact)
+@app.route("/citas/agregar", methods=["POST"])
+@cliente_requerido
+def agregar_cita():
+    validar_token_csrf()
+    conexion = None
+    cursor = None
+
+    try:
+        conexion = obtener_conexion()
+        cursor = conexion.cursor(dictionary=True)
+
+        datos, error = validar_datos_cita(cursor, request.form)
+        if error:
+            flash(error, "error")
+            return redirect(url_for("panel_cliente"))
+
+        cursor.execute(
+            """
+            INSERT INTO citas
+                (id_cliente, id_barbero, id_servicio, fecha,
+                 hora_inicio, hora_fin, observaciones)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """,
+            (session["id_usuario"], *datos)
+        )
+        id_cita = cursor.lastrowid
+
+        # Avisar al barbero que tiene una nueva reserva
+        cursor.execute(
+            """
+            INSERT INTO notificaciones (id_usuario, id_cita, mensaje)
+            SELECT id_usuario, %s, %s
+            FROM barberos
+            WHERE id_barbero = %s
+            """,
+            (
+                id_cita,
+                f"{session['nombre']} reservó una cita para el "
+                f"{datos[2].strftime('%d/%m/%Y')} a las "
+                f"{datos[3].strftime('%H:%M')}.",
+                datos[0]
+            )
+        )
+
+        conexion.commit()
+        flash("Cita reservada correctamente.", "success")
+
+    except Exception:
+        if conexion:
+            conexion.rollback()
+        app.logger.exception("Error al agregar una cita")
+        flash("No se pudo reservar la cita.", "error")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+
+    return redirect(url_for("panel_cliente"))
+
+
+# Mostrar el formulario para editar una cita
+# (en el video es la ruta /edit/<id>)
+@app.route("/citas/editar/<int:id_cita>")
+@cliente_requerido
+def editar_cita(id_cita):
+    conexion = None
+    cursor = None
+
+    try:
+        conexion = obtener_conexion()
+        cursor = conexion.cursor(dictionary=True)
+
+        # CORRECCION DEL ERROR DEL VIDEO:
+        # En el video se escribe:  cur.execute('... id = %s', (id))
+        # Pero (id) NO es una tupla, los parentesis solos no hacen nada.
+        # Si id es el texto "14", la libreria del video (flask_mysqldb)
+        # lo recorre letra por letra como si fueran dos parametros
+        # ("1" y "4") y la consulta falla con cualquier id de dos o mas
+        # cifras. Con mysql-connector (la que usamos aqui) falla siempre,
+        # porque exige una tupla, lista o diccionario.
+        # Lo correcto es poner una coma para crear una tupla de un
+        # solo elemento: (id_cita,)
+        cursor.execute(
+            """
+            SELECT
+                id_cita, id_cliente, id_barbero, id_servicio, estado,
+                observaciones,
+                DATE_FORMAT(fecha, '%Y-%m-%d') AS fecha,
+                TIME_FORMAT(hora_inicio, '%H:%i') AS hora
+            FROM citas
+            WHERE id_cita = %s
+            """,
+            (id_cita,)
+        )
+        cita = cursor.fetchone()
+
+        if not cita:
+            abort(404)
+        if cita["id_cliente"] != session["id_usuario"]:
+            abort(403)
+        if cita["estado"] != "pendiente":
+            flash("Solo puedes editar citas pendientes.", "error")
+            return redirect(url_for("panel_cliente"))
+
+        barberos, servicios = obtener_opciones_cita(cursor)
+
+        return render_template(
+            "editar_cita.html",
+            cita=cita,
+            barberos=barberos,
+            servicios=servicios,
+            hoy=date.today().isoformat()
+        )
+
+    except HTTPException:
+        raise
+    except Exception:
+        app.logger.exception("Error al cargar una cita")
+        flash("No se pudo cargar la cita.", "error")
+        return redirect(url_for("panel_cliente"))
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+
+
+# Guardar los cambios de una cita (en el video es la ruta /update/<id>)
+@app.route("/citas/actualizar/<int:id_cita>", methods=["POST"])
+@cliente_requerido
+def actualizar_cita_cliente(id_cita):
+    validar_token_csrf()
+    conexion = None
+    cursor = None
+
+    try:
+        conexion = obtener_conexion()
+        cursor = conexion.cursor(dictionary=True)
+
+        datos, error = validar_datos_cita(cursor, request.form, id_cita)
+        if error:
+            flash(error, "error")
+            return redirect(url_for("editar_cita", id_cita=id_cita))
+
+        cursor.execute(
+            """
+            UPDATE citas
+            SET id_barbero = %s, id_servicio = %s, fecha = %s,
+                hora_inicio = %s, hora_fin = %s, observaciones = %s
+            WHERE id_cita = %s AND id_cliente = %s AND estado = 'pendiente'
+            """,
+            (*datos, id_cita, session["id_usuario"])
+        )
+
+        if cursor.rowcount != 1:
+            conexion.rollback()
+            flash("La cita no existe o ya no se puede editar.", "error")
+        else:
+            conexion.commit()
+            flash("Cita actualizada correctamente.", "success")
+
+    except Exception:
+        if conexion:
+            conexion.rollback()
+        app.logger.exception("Error al actualizar una cita")
+        flash("No se pudo actualizar la cita.", "error")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+
+    return redirect(url_for("panel_cliente"))
+
+
+# Eliminar una cita (en el video es la ruta /delete/<id>)
+# En el video el SQL se arma con .format(id), lo que permite
+# inyeccion SQL. Aqui se usa %s para que MySQL reciba el valor
+# por separado. Ademas se usa POST con token CSRF en vez de un
+# enlace GET, para que nadie pueda borrar citas con un link.
+@app.route("/citas/eliminar/<int:id_cita>", methods=["POST"])
+@cliente_requerido
+def eliminar_cita(id_cita):
+    validar_token_csrf()
+    conexion = None
+    cursor = None
+
+    try:
+        conexion = obtener_conexion()
+        cursor = conexion.cursor()
+
+        cursor.execute(
+            """
+            DELETE FROM citas
+            WHERE id_cita = %s AND id_cliente = %s
+              AND estado IN ('pendiente', 'rechazada', 'cancelada')
+            """,
+            (id_cita, session["id_usuario"])
+        )
+
+        if cursor.rowcount != 1:
+            conexion.rollback()
+            flash("No puedes eliminar esta cita.", "error")
+        else:
+            conexion.commit()
+            flash("Cita eliminada correctamente.", "success")
+
+    except Exception:
+        if conexion:
+            conexion.rollback()
+        app.logger.exception("Error al eliminar una cita")
+        flash("No se pudo eliminar la cita.", "error")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+
+    return redirect(url_for("panel_cliente"))
 
 
 # Panel privado de administradores y barberos

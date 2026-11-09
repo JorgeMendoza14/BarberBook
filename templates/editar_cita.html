@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101010">
+    <title>Editar cita | BarberBook</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="barber-dashboard">
+    {% include "_cliente_nav.html" %}
+
+    <main class="dashboard-main">
+        <section class="dashboard-intro">
+            <p class="dashboard-eyebrow">PANEL DEL CLIENTE</p>
+            <h1>Editar cita</h1>
+            <p>Cambia los datos de tu cita y guarda los cambios.</p>
+        </section>
+
+        {% include "_mensajes.html" %}
+
+        <section class="admin-form-card" aria-labelledby="editar-cita-title">
+            <div class="admin-section-heading">
+                <div>
+                    <p class="dashboard-eyebrow">ACTUALIZACIÓN</p>
+                    <h2 id="editar-cita-title">Cita #{{ cita.id_cita }}</h2>
+                </div>
+                <a class="admin-secondary-link" href="{{ url_for('panel_cliente') }}">Cancelar</a>
+            </div>
+            <form class="admin-form-grid"
+                  action="{{ url_for('actualizar_cita_cliente', id_cita=cita.id_cita) }}" method="POST">
+                {% include "_formulario_cita.html" %}
+                <div class="admin-form-actions admin-field-wide">
+                    <button class="admin-primary-button" type="submit">Guardar cambios</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

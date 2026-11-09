@@ -1,24 +1,102 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi panel | BarberBook</title>
+    <meta name="theme-color" content="#101010">
+    <title>Mis citas | BarberBook</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <main class="auth-container">
-        <div class="auth-card">
-            <h1>Hola, {{ session['nombre'] }} 💈</h1>
-            <p>Bienvenido a tu panel de cliente.</p>
-            <p>Próximamente podrás reservar tus citas aquí.</p>
+<body class="barber-dashboard">
+    {% include "_cliente_nav.html" %}
 
-            <form action="{{ url_for('logout') }}" method="POST">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn">Cerrar sesión</button>
-            </form>
-        </div>
+    <main class="dashboard-main">
+        <section class="dashboard-intro">
+            <p class="dashboard-eyebrow">PANEL DEL CLIENTE</p>
+            <h1>Hola, {{ session['nombre'] }} 💈</h1>
+            <p>Reserva una cita nueva o administra las que ya tienes.</p>
+        </section>
+
+        {% include "_mensajes.html" %}
+
+        <section class="admin-form-card" aria-labelledby="form-cita-title">
+            <div class="admin-section-heading">
+                <div>
+                    <p class="dashboard-eyebrow">NUEVA RESERVA</p>
+                    <h2 id="form-cita-title">Reservar cita</h2>
+                </div>
+            </div>
+            {% if barberos and servicios %}
+                <form class="admin-form-grid" action="{{ url_for('agregar_cita') }}" method="POST">
+                    {% set cita = None %}
+                    {% include "_formulario_cita.html" %}
+                    <div class="admin-form-actions admin-field-wide">
+                        <button class="admin-primary-button" type="submit">Reservar cita</button>
+                    </div>
+                </form>
+            {% else %}
+                <p>Por ahora no hay barberos o servicios disponibles para reservar.</p>
+            {% endif %}
+        </section>
+
+        <section class="appointments-section admin-list-section" aria-labelledby="mis-citas-title">
+            <div class="appointments-heading">
+                <div>
+                    <p class="dashboard-eyebrow">HISTORIAL</p>
+                    <h2 id="mis-citas-title">Mis citas</h2>
+                </div>
+                <span class="appointments-count">{{ citas|length }} citas</span>
+            </div>
+            <div class="appointments-table-wrap">
+                <table class="appointments-table admin-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Hora</th>
+                            <th scope="col">Barbero</th>
+                            <th scope="col">Servicio</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cita in citas %}
+                            <tr>
+                                <td data-label="Fecha">{{ cita.fecha }}</td>
+                                <td data-label="Hora">{{ cita.hora }}</td>
+                                <td data-label="Barbero">{{ cita.barbero }}</td>
+                                <td data-label="Servicio">{{ cita.servicio }}</td>
+                                <td data-label="Precio">${{ '%.2f'|format(cita.precio) }}</td>
+                                <td data-label="Estado">
+                                    <span class="status-badge status-{{ cita.estado }}">{{ cita.estado|capitalize }}</span>
+                                </td>
+                                <td data-label="Acciones">
+                                    <div class="admin-row-actions">
+                                        {% if cita.estado == 'pendiente' %}
+                                            <a class="action-button action-edit"
+                                               href="{{ url_for('editar_cita', id_cita=cita.id_cita) }}">Editar</a>
+                                        {% endif %}
+                                        {% if cita.estado in ('pendiente', 'rechazada', 'cancelada') %}
+                                            <form action="{{ url_for('eliminar_cita', id_cita=cita.id_cita) }}" method="POST"
+                                                  onsubmit="return confirm('¿Seguro que quieres eliminar esta cita?');">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button class="action-button action-reject" type="submit">Eliminar</button>
+                                            </form>
+                                        {% endif %}
+                                        {% if cita.estado in ('confirmada', 'completada') %}
+                                            <span class="no-action">—</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td class="empty-appointments" colspan="7">Aún no tienes citas reservadas.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 </body>
 </html>
