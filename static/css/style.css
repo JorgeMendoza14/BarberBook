@@ -1,10 +1,19 @@
+/* ============================================================
+   BarberBook - Hoja de estilos
+   Estilo sobrio: fondo claro, barra azul y tablas simples.
+   ============================================================ */
 
 :root {
-    --fondo: #101010;
-    --tarjeta: #1e1e1e;
-    --dorado: #d4af37;
+    --azul: #1f3a5f;
+    --azul-claro: #2b5c94;
+    --fondo: #f2f4f7;
     --blanco: #ffffff;
-    --gris: #bbbbbb;
+    --borde: #cfd6df;
+    --texto: #222222;
+    --gris: #5f6b7a;
+    --verde: #2e7d32;
+    --rojo: #c62828;
+    --amarillo: #a66b00;
 }
 
 * {
@@ -14,1240 +23,646 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
     background: var(--fondo);
-    color: var(--blanco);
+    color: var(--texto);
 }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 22px 8%;
-    gap: 20px;
-}
-
-.logo {
-    color: var(--blanco);
-    font-size: 26px;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.logo span, .etiqueta {
-    color: var(--dorado);
-}
-
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-}
-
-.nav-links a {
-    color: var(--blanco);
-    text-decoration: none;
-}
-
-.btn {
-    display: inline-block;
-    background: var(--dorado);
-    color: #111 !important;
-    padding: 13px 23px;
-    border-radius: 6px;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.btn-outline {
-    background: transparent;
-    color: var(--dorado) !important;
-    border: 1px solid var(--dorado);
-    cursor: pointer;
-    font: inherit;
-    font-weight: bold;
-}
-
-button.btn {
-    border: 1px solid var(--dorado);
-    cursor: pointer;
-    font: inherit;
-    font-weight: bold;
-}
-
-.nav-form {
-    margin: 0;
-}
-
-.reservar-acciones {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-top: 20px;
-}
-
-.mensaje-portada {
-    max-width: 700px;
-    margin: 10px auto;
-    text-align: center;
-}
-
-.volver-inicio {
-    display: inline-block;
-    margin-bottom: 16px;
-    font-size: 14px;
-}
-
-.hero {
-    min-height: 70vh;
-    display: flex;
-    align-items: center;
-    padding: 70px 8%;
-    background: linear-gradient(135deg, #242017, #101010 70%);
-}
-
-.hero-content {
-    max-width: 650px;
-}
-
-.etiqueta {
-    font-size: 13px;
-    letter-spacing: 3px;
-    margin-bottom: 18px;
+a {
+    color: var(--azul-claro);
 }
 
 h1 {
-    font-size: clamp(38px, 6vw, 72px);
-    margin-bottom: 22px;
-}
-
-.hero p {
-    color: var(--gris);
-    line-height: 1.7;
-    margin-bottom: 25px;
-}
-
-.servicios, .reservar {
-    padding: 75px 8%;
-    text-align: center;
+    font-size: 26px;
+    margin-bottom: 10px;
+    color: var(--azul);
 }
 
 h2 {
-    font-size: 32px;
-    margin-bottom: 35px;
-}
-
-.servicios-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-}
-
-.servicio {
-    background: var(--tarjeta);
-    padding: 35px 24px;
-    border-radius: 12px;
-    text-align: left;
-}
-
-.servicio h3 {
-    color: var(--dorado);
+    font-size: 20px;
     margin-bottom: 14px;
+    color: var(--azul);
 }
 
-.servicio p {
-    color: var(--gris);
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-.servicio strong {
-    font-size: 24px;
-}
-
-.reservar {
-    background: #191919;
-}
-
-.reservar p {
-    color: var(--gris);
-}
-
-footer {
-    padding: 25px;
-    text-align: center;
-    color: var(--gris);
-}
-
-@media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-    }
-
-    .nav-links {
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 14px;
-    }
-
-    .servicios-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .hero {
-        min-height: 60vh;
-    }
-}
-
-
-.auth-container {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 30px 20px;
-}
-
-.auth-card {
-    background: #1e1e1e;
-    padding: 40px;
-    border-radius: 15px;
+.contenedor {
     width: 100%;
-    max-width: 440px;
-    text-align: center;
-    border: 1px solid #393225;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px;
 }
 
-.auth-card h1 {
-    font-size: 30px;
-    color: #d4af37;
-    margin-bottom: 12px;
-}
-
-.auth-card p {
-    color: #bbbbbb;
-    margin-bottom: 20px;
-}
-
-.auth-card form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.auth-card input {
-    padding: 14px;
-    background: #111;
-    color: white;
-    border: 1px solid #444;
-    border-radius: 7px;
-    font-size: 15px;
-}
-
-.auth-card input:focus {
-    outline: none;
-    border-color: #d4af37;
-}
-
-.auth-card button {
-    border: none;
+/* ---------- Botones ---------- */
+.btn,
+.admin-primary-button {
+    display: inline-block;
+    padding: 9px 18px;
+    background: var(--azul-claro);
+    color: var(--blanco);
+    border: 1px solid var(--azul-claro);
+    border-radius: 3px;
+    font: inherit;
+    font-weight: bold;
+    text-decoration: none;
     cursor: pointer;
-    font-size: 15px;
 }
 
-.auth-card a {
-    color: #d4af37;
+.btn:hover,
+.admin-primary-button:hover {
+    background: var(--azul);
+    border-color: var(--azul);
 }
 
+.btn-outline {
+    background: var(--blanco);
+    color: var(--azul-claro);
+}
+
+.btn-outline:hover {
+    color: var(--blanco);
+}
+
+.nav-form {
+    display: inline;
+}
+
+/* ---------- Mensajes ---------- */
 .mensaje {
-    padding: 12px;
-    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 14px 0;
+    border: 1px solid;
+    border-radius: 3px;
 }
 
 .mensaje.error {
-    background: #522222;
-    color: #ffd5d5;
+    background: #fdecea;
+    border-color: #f5c2c0;
+    color: var(--rojo);
 }
 
 .mensaje.success {
-    background: #244a30;
-    color: #d6ffe1;
-}
-
-.barber-dashboard {
-    min-height: 100vh;
-    background: #101010;
-    color: #fff;
-}
-
-.barber-dashboard .dashboard-header {
-    min-height: 82px;
-    padding: 16px 7%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    border-bottom: 1px solid #302b20;
-    background: #151515;
-}
-
-.barber-dashboard .dashboard-brand {
-    color: #fff;
-    font-size: 25px;
-    font-weight: 700;
-    text-decoration: none;
-}
-
-.barber-dashboard .dashboard-brand span {
-    color: #d4af37;
-}
-
-.barber-dashboard .dashboard-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.barber-dashboard .dashboard-nav a {
-    padding: 9px 11px;
-    border-radius: 6px;
-    color: #d0d0d0;
-    font-size: 13px;
-    text-decoration: none;
-    white-space: nowrap;
-}
-
-.barber-dashboard .dashboard-nav a:hover,
-.barber-dashboard .dashboard-nav a.is-active {
-    background: #2a2518;
-    color: #e4c34d;
-}
-
-.barber-dashboard .dashboard-user {
-    display: flex;
-    align-items: center;
-    gap: 22px;
-}
-
-.barber-dashboard .dashboard-user > div {
-    display: grid;
-    gap: 4px;
-}
-
-.barber-dashboard .dashboard-user-label,
-.barber-dashboard .stat-label,
-.barber-dashboard .stat-note,
-.barber-dashboard .appointments-count,
-.barber-dashboard .no-action {
-    color: #b7b7b7;
-    font-size: 13px;
-}
-
-.barber-dashboard .dashboard-user strong {
-    font-size: 14px;
-}
-
-.barber-dashboard .dashboard-logout {
-    padding: 10px 15px;
-    border: 1px solid #655528;
-    border-radius: 6px;
-    background: transparent;
-    color: #e6c85a;
-    font: inherit;
-    cursor: pointer;
-}
-
-.barber-dashboard .dashboard-logout:hover {
-    background: #292416;
-}
-
-.barber-dashboard .dashboard-main {
-    width: min(1440px, 100%);
-    margin: 0 auto;
-    padding: 48px 7% 72px;
-}
-
-.barber-dashboard .dashboard-intro {
-    margin-bottom: 32px;
-}
-
-.barber-dashboard .dashboard-eyebrow {
-    margin-bottom: 10px;
-    color: #d4af37;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-}
-
-.barber-dashboard .dashboard-intro h1 {
-    margin-bottom: 9px;
-    font-size: clamp(32px, 5vw, 44px);
-}
-
-.barber-dashboard .dashboard-intro > p:last-child {
-    color: #b7b7b7;
-    line-height: 1.6;
-}
-
-.barber-dashboard .dashboard-messages {
-    margin-bottom: 22px;
-}
-
-.barber-dashboard .dashboard-messages .mensaje {
-    margin-bottom: 10px;
-}
-
-.barber-dashboard .dashboard-stats {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
-    margin-bottom: 42px;
-}
-
-.barber-dashboard .stat-card {
-    min-height: 145px;
-    padding: 22px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 9px;
-    border: 1px solid #38342a;
-    border-radius: 10px;
-    background: linear-gradient(145deg, #202020, #181818);
-}
-
-.barber-dashboard .stat-card strong {
-    color: #e3c34d;
-    font-size: 34px;
-    line-height: 1;
-}
-
-.barber-dashboard .stat-note {
-    font-size: 12px;
-}
-
-.barber-dashboard .appointments-section {
-    overflow: hidden;
-    border: 1px solid #38342a;
-    border-radius: 10px;
-    background: #181818;
-}
-
-.barber-dashboard .admin-form-card {
-    margin-bottom: 36px;
-    padding: 24px;
-    border: 1px solid #38342a;
-    border-radius: 10px;
-    background: #181818;
-}
-
-.barber-dashboard .admin-section-heading {
-    margin-bottom: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-}
-
-.barber-dashboard .admin-section-heading .dashboard-eyebrow {
-    margin-bottom: 6px;
-}
-
-.barber-dashboard .admin-section-heading h2 {
-    margin: 0;
-    color: #fff;
-    font-size: 22px;
-}
-
-.barber-dashboard .admin-secondary-link {
-    color: #e4c34d;
-    font-size: 13px;
-    text-decoration: none;
-}
-
-.barber-dashboard .admin-secondary-link:hover {
-    text-decoration: underline;
-}
-
-.barber-dashboard .admin-form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
-}
-
-.barber-dashboard .admin-form-grid label {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    color: #e3e3e3;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.barber-dashboard .admin-form-grid input,
-.barber-dashboard .admin-form-grid select,
-.barber-dashboard .admin-form-grid textarea {
-    width: 100%;
-    min-height: 44px;
-    padding: 11px 12px;
-    border: 1px solid #424242;
-    border-radius: 6px;
-    background: #101010;
-    color: #fff;
-    font: inherit;
-    font-weight: 400;
-}
-
-.barber-dashboard .admin-form-grid textarea {
-    min-height: 90px;
-    resize: vertical;
-}
-
-.barber-dashboard .admin-form-grid input:focus,
-.barber-dashboard .admin-form-grid select:focus,
-.barber-dashboard .admin-form-grid textarea:focus {
-    outline: 2px solid #d4af37;
-    outline-offset: 1px;
-    border-color: #d4af37;
-}
-
-.barber-dashboard .admin-form-grid input::placeholder,
-.barber-dashboard .admin-form-grid textarea::placeholder {
-    color: #858585;
-}
-
-.barber-dashboard .admin-input-affix {
-    position: relative;
-}
-
-.barber-dashboard .admin-input-affix > span {
-    position: absolute;
-    top: 50%;
-    left: 12px;
-    color: #d4af37;
-    transform: translateY(-50%);
-}
-
-.barber-dashboard .admin-input-affix input {
-    padding-left: 28px;
-}
-
-.barber-dashboard .admin-field-wide {
-    grid-column: 1 / -1;
-}
-
-.barber-dashboard .admin-form-actions {
-    display: flex;
-    justify-content: flex-start;
-}
-
-.barber-dashboard .admin-primary-button {
-    min-height: 43px;
-    padding: 11px 18px;
-    border: 0;
-    border-radius: 6px;
-    background: #d4af37;
-    color: #151515;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.barber-dashboard .admin-primary-button:hover {
-    background: #e5c95e;
-}
-
-.barber-dashboard .admin-list-section {
-    margin-top: 0;
-}
-
-.barber-dashboard .admin-table {
-    min-width: 850px;
-}
-
-.barber-dashboard .admin-table td {
-    max-width: 260px;
-    overflow-wrap: anywhere;
-}
-
-.barber-dashboard .admin-row-actions {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-}
-
-.barber-dashboard .admin-row-actions form {
-    margin: 0;
-}
-
-.barber-dashboard .action-edit {
-    border-color: #655528;
-    background: #292416;
-    color: #e6c85a;
-    text-decoration: none;
-}
-
-.barber-dashboard .action-edit:hover {
-    background: #3a321c;
-}
-
-.barber-dashboard .appointments-heading {
-    padding: 22px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    border-bottom: 1px solid #302b20;
-}
-
-.barber-dashboard .appointments-heading .dashboard-eyebrow {
-    margin-bottom: 6px;
-}
-
-.barber-dashboard .appointments-heading h2 {
-    margin: 0;
-    color: #fff;
-    font-size: 22px;
-}
-
-.barber-dashboard .appointments-count {
-    white-space: nowrap;
-}
-
-.barber-dashboard .appointments-table-wrap {
-    overflow-x: auto;
-}
-
-.barber-dashboard .appointments-table {
-    width: 100%;
-    min-width: 900px;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-.barber-dashboard .appointments-table th,
-.barber-dashboard .appointments-table td {
-    padding: 16px 18px;
-    border-bottom: 1px solid #2b2b2b;
-    vertical-align: middle;
-}
-
-.barber-dashboard .appointments-table th {
-    color: #d4af37;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: .4px;
-}
-
-.barber-dashboard .appointments-table td {
-    color: #e7e7e7;
-    font-size: 13px;
-}
-
-.barber-dashboard .appointments-table tbody tr:last-child td {
-    border-bottom: 0;
-}
-
-.barber-dashboard .status-badge {
-    display: inline-block;
-    padding: 6px 9px;
-    border-radius: 20px;
-    background: #292929;
-    color: #eee;
-    font-size: 11px;
-    white-space: nowrap;
-}
-
-.barber-dashboard .status-pendiente {
-    background: #3a3017;
-    color: #f0d36b;
-}
-
-.barber-dashboard .status-confirmada,
-.barber-dashboard .status-completada {
-    background: #1f3828;
-    color: #9de0af;
-}
-
-.barber-dashboard .status-rechazada,
-.barber-dashboard .status-cancelada {
-    background: #3d2525;
-    color: #f0aaaa;
-}
-
-.barber-dashboard .appointment-actions {
-    display: flex;
-    gap: 7px;
-}
-
-.barber-dashboard .action-button {
-    padding: 7px 9px;
-    border: 1px solid transparent;
-    border-radius: 5px;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-.barber-dashboard .action-accept {
-    background: #d4af37;
-    color: #151515;
-}
-
-.barber-dashboard .action-accept:hover {
-    background: #e5c95e;
-}
-
-.barber-dashboard .action-reject {
-    border-color: #714141;
-    background: #352020;
-    color: #f1b4b4;
-}
-
-.barber-dashboard .action-reject:hover {
-    background: #4a2828;
-}
-
-.barber-dashboard .empty-appointments {
-    padding: 40px 18px !important;
-    color: #b7b7b7 !important;
-    text-align: center;
-}
-
-@media (max-width: 900px) {
-    .barber-dashboard .dashboard-header {
-        flex-wrap: wrap;
-    }
-
-    .barber-dashboard .dashboard-nav {
-        order: 3;
-        width: 100%;
-    }
-
-    .barber-dashboard .dashboard-stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 600px) {
-    .barber-dashboard .dashboard-header {
-        padding: 15px 5%;
-    }
-
-    .barber-dashboard .dashboard-nav {
-        justify-content: flex-start;
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        padding-bottom: 3px;
-    }
-
-    .barber-dashboard .dashboard-nav a {
-        padding: 8px 9px;
-    }
-
-    .barber-dashboard .dashboard-user {
-        gap: 12px;
-    }
-
-    .barber-dashboard .dashboard-user-label {
-        display: none;
-    }
-
-    .barber-dashboard .dashboard-user strong {
-        max-width: 100px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .barber-dashboard .dashboard-logout {
-        padding: 9px 10px;
-        font-size: 12px;
-    }
-
-    .barber-dashboard .dashboard-main {
-        padding: 34px 5% 48px;
-    }
-
-    .barber-dashboard .dashboard-stats {
-        gap: 11px;
-    }
-
-    .barber-dashboard .stat-card {
-        min-height: 130px;
-        padding: 16px;
-    }
-
-    .barber-dashboard .appointments-heading {
-        padding: 18px;
-    }
-
-    .barber-dashboard .appointments-heading h2 {
-        font-size: 19px;
-    }
-
-    .barber-dashboard .admin-form-card {
-        padding: 18px;
-    }
-
-    .barber-dashboard .admin-form-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
-    .barber-dashboard .admin-field-wide {
-        grid-column: auto;
-    }
-}
-
-
-/* ============================================================
-   PORTADA (index.html)
-   ============================================================ */
-html {
-    scroll-behavior: smooth;
-}
-
-.portada-header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: rgba(16, 16, 16, 0.92);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid #222;
-}
-
-.portada .etiqueta {
-    letter-spacing: 3px;
-    font-size: 13px;
-    font-weight: bold;
-    margin-bottom: 12px;
-}
-
-.hero-portada {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    align-items: center;
-    gap: 40px;
-    padding: 70px 8% 60px;
-    background:
-        radial-gradient(circle at 80% 40%, rgba(212, 175, 55, 0.12), transparent 55%),
-        linear-gradient(135deg, #1a1712 0%, #101010 60%);
-}
-
-.hero-texto h1 {
-    font-size: clamp(38px, 6vw, 64px);
-    line-height: 1.08;
-    margin-bottom: 20px;
-}
-
-.hero-texto h1 span {
-    color: var(--dorado);
-}
-
-.hero-texto > p:not(.etiqueta) {
-    color: var(--gris);
-    font-size: 18px;
-    line-height: 1.6;
-    max-width: 520px;
-    margin-bottom: 30px;
-}
-
-.hero-acciones {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-}
-
-.hero-imagen img {
-    width: 100%;
-    max-width: 440px;
-    display: block;
-    margin: 0 auto;
-    animation: flotar 6s ease-in-out infinite;
-}
-
-@keyframes flotar {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-}
-
-.ventajas {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    padding: 0 8%;
-    margin-top: -30px;
-    position: relative;
-}
-
-.ventajas article {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: var(--tarjeta);
-    border: 1px solid #2c2c2c;
-    border-radius: 12px;
-    padding: 20px;
-}
-
-.ventajas img {
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
-}
-
-.ventajas h3 {
-    font-size: 17px;
-    margin-bottom: 4px;
-}
-
-.ventajas p {
-    color: var(--gris);
-    font-size: 14px;
-}
-
-.seccion {
-    padding: 80px 8%;
-    text-align: center;
-}
-
-.seccion h2 {
-    font-size: 36px;
-    margin-bottom: 40px;
-}
-
-.seccion-oscura {
-    background: #151515;
-}
-
-.portada .servicios-grid {
-    text-align: left;
-}
-
-.portada .servicio {
-    border: 1px solid #2c2c2c;
-    border-radius: 14px;
-    padding: 28px;
-    transition: transform 0.2s, border-color 0.2s;
-    display: flex;
-    flex-direction: column;
-}
-
-.portada .servicio:hover {
-    transform: translateY(-6px);
-    border-color: var(--dorado);
-}
-
-.servicio-icono {
-    width: 64px;
-    height: 64px;
-    display: grid;
-    place-items: center;
-    border-radius: 14px;
-    background: rgba(212, 175, 55, 0.1);
-    margin-bottom: 18px;
-}
-
-.servicio-icono img {
-    width: 40px;
-    height: 40px;
-}
-
-.portada .servicio p {
-    flex-grow: 1;
-}
-
-.servicio-pie {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    border-top: 1px solid #2c2c2c;
-    padding-top: 14px;
-    margin-top: 10px;
-}
-
-.servicio-pie span {
-    color: var(--gris);
-    font-size: 14px;
-}
-
-.barberos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-    text-align: left;
-}
-
-.barbero-card {
-    background: var(--tarjeta);
-    border: 1px solid #2c2c2c;
-    border-radius: 14px;
-    padding: 26px;
-    display: flex;
-    flex-direction: column;
-}
-
-.barbero-cabecera {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 14px;
-}
-
-.barbero-avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    font-size: 22px;
-    font-weight: bold;
-    color: #111;
-    background: linear-gradient(135deg, #f3d778, #b08a1e);
-    flex-shrink: 0;
-}
-
-.barbero-cabecera h3 {
-    font-size: 20px;
-}
-
-.barbero-especialidad {
-    color: var(--dorado);
-    font-size: 14px;
-    margin-top: 4px;
-}
-
-.barbero-descripcion {
-    color: var(--gris);
-    font-size: 15px;
-    line-height: 1.5;
-    margin-bottom: 16px;
-}
-
-.barbero-card h4 {
-    font-size: 13px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gris);
-    margin-bottom: 10px;
-}
-
-.horario-lista {
-    list-style: none;
-    margin-bottom: 20px;
-    flex-grow: 1;
-}
-
-.horario-lista li {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px dashed #333;
-    font-size: 15px;
-}
-
-.horario-lista li span:last-child {
-    color: var(--dorado);
-    font-variant-numeric: tabular-nums;
-}
-
-.btn-bloque {
-    display: block;
-    text-align: center;
-    margin-top: auto;
+    background: #e8f5e9;
+    border-color: #b9dfbb;
+    color: var(--verde);
 }
 
 .texto-vacio {
     color: var(--gris);
 }
 
-.barbero-card .texto-vacio {
-    margin-bottom: 20px;
-    flex-grow: 1;
+/* ============================================================
+   PAGINA PRINCIPAL (index.html)
+   ============================================================ */
+.barra-superior {
+    background: #14273f;
+    color: #c9d3df;
+    font-size: 13px;
+    padding: 5px 0;
 }
 
-.cta-reservar {
-    margin: 80px 8%;
-    padding: 44px;
-    border-radius: 18px;
+.encabezado {
+    background: var(--azul);
+    border-bottom: 4px solid var(--azul-claro);
+}
+
+.encabezado-contenido {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 24px;
     flex-wrap: wrap;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(212, 175, 55, 0.04));
-    border: 1px solid rgba(212, 175, 55, 0.35);
+    gap: 12px;
+    padding-top: 14px;
+    padding-bottom: 14px;
 }
 
-.cta-reservar h2 {
-    font-size: 30px;
-    margin-bottom: 8px;
+.logo {
+    color: var(--blanco);
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
 }
 
-.cta-reservar p {
+.logo span {
+    color: #9cc3ef;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.menu > a:not(.btn) {
+    color: var(--blanco);
+    text-decoration: none;
+}
+
+.menu > a:not(.btn):hover {
+    text-decoration: underline;
+}
+
+.bloque {
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 3px;
+    padding: 22px;
+    margin: 18px 0;
+}
+
+.bloque > p {
+    margin-bottom: 14px;
+}
+
+.pasos {
+    padding-left: 22px;
+}
+
+.pasos li {
+    margin-bottom: 6px;
+}
+
+.barberos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.barbero-card {
+    border: 1px solid var(--borde);
+    border-radius: 3px;
+    padding: 16px;
+}
+
+.barbero-card h3 {
+    font-size: 17px;
+}
+
+.barbero-especialidad {
     color: var(--gris);
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
-.cta-reservar .reservar-acciones {
-    margin-top: 0;
+.pie {
+    background: var(--azul);
+    color: #c9d3df;
+    font-size: 13px;
+    padding: 18px 0;
+    margin-top: 30px;
+    text-align: center;
 }
 
-.portada-footer {
+/* ---------- Tablas ---------- */
+.tabla-contenedor,
+.barber-dashboard .appointments-table-wrap {
+    overflow-x: auto;
+}
+
+.tabla,
+.barber-dashboard .appointments-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--blanco);
+}
+
+.tabla th,
+.tabla td,
+.barber-dashboard .appointments-table th,
+.barber-dashboard .appointments-table td {
+    border: 1px solid var(--borde);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.tabla th,
+.barber-dashboard .appointments-table th {
+    background: #e4e9f0;
+    color: var(--azul);
+    font-size: 14px;
+}
+
+.tabla tbody tr:nth-child(even),
+.barber-dashboard .appointments-table tbody tr:nth-child(even) {
+    background: #f7f9fb;
+}
+
+.tabla-compacta th,
+.tabla-compacta td {
+    padding: 5px 8px;
+    font-size: 14px;
+}
+
+/* ============================================================
+   LOGIN Y REGISTRO
+   ============================================================ */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 16px;
+}
+
+.auth-card {
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-top: 5px solid var(--azul);
+    border-radius: 3px;
+    padding: 30px;
+    width: 100%;
+    max-width: 420px;
+}
+
+.auth-card h1 {
+    font-size: 22px;
+}
+
+.auth-card p {
+    margin-bottom: 14px;
+}
+
+.auth-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.auth-card input {
+    padding: 9px 10px;
+    border: 1px solid var(--borde);
+    border-radius: 3px;
+    font: inherit;
+}
+
+.auth-card input:focus {
+    outline: 2px solid var(--azul-claro);
+    border-color: var(--azul-claro);
+}
+
+.auth-card button {
+    width: 100%;
+}
+
+.volver-inicio {
+    display: inline-block;
+    margin-bottom: 14px;
+    font-size: 14px;
+}
+
+/* ============================================================
+   PANELES (cliente, barbero y administrador)
+   ============================================================ */
+.barber-dashboard .dashboard-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 30px;
-    padding: 40px 8% 24px;
-    border-top: 1px solid #222;
-    text-align: left;
+    gap: 12px;
+    padding: 12px 24px;
+    background: var(--azul);
+    border-bottom: 4px solid var(--azul-claro);
 }
 
-.portada-footer p,
-.portada-footer a:not(.logo) {
-    color: var(--gris);
+.barber-dashboard .dashboard-brand {
+    color: var(--blanco);
+    font-size: 22px;
+    font-weight: bold;
     text-decoration: none;
-    display: block;
-    margin-top: 8px;
 }
 
-.portada-footer h4 {
+.barber-dashboard .dashboard-brand span {
+    color: #9cc3ef;
+}
+
+.barber-dashboard .dashboard-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.barber-dashboard .dashboard-nav a {
+    color: var(--blanco);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 3px;
+}
+
+.barber-dashboard .dashboard-nav a:hover,
+.barber-dashboard .dashboard-nav a.is-active {
+    background: var(--azul-claro);
+}
+
+.barber-dashboard .dashboard-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     color: var(--blanco);
 }
 
-.footer-copy {
-    width: 100%;
+.barber-dashboard .dashboard-user > div {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    font-size: 14px;
+}
+
+.barber-dashboard .dashboard-user-label {
+    color: #c9d3df;
+    font-size: 12px;
+}
+
+.barber-dashboard .dashboard-logout {
+    padding: 6px 12px;
+    background: var(--blanco);
+    color: var(--azul);
+    border: none;
+    border-radius: 3px;
+    font: inherit;
+    cursor: pointer;
+}
+
+.barber-dashboard .dashboard-main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+}
+
+.barber-dashboard .dashboard-intro {
+    margin-bottom: 16px;
+}
+
+.barber-dashboard .dashboard-intro p {
+    color: var(--gris);
+}
+
+.barber-dashboard .dashboard-eyebrow {
+    color: var(--gris);
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+/* Resumen de citas (panel del barbero) */
+.barber-dashboard .dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.barber-dashboard .stat-card {
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-left: 4px solid var(--azul-claro);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+}
+
+.barber-dashboard .stat-card strong {
+    font-size: 26px;
+    color: var(--azul);
+}
+
+.barber-dashboard .stat-label {
+    font-weight: bold;
+}
+
+.barber-dashboard .stat-note {
+    color: var(--gris);
+    font-size: 13px;
+}
+
+/* Secciones con formulario o tabla */
+.barber-dashboard .admin-form-card,
+.barber-dashboard .appointments-section {
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 3px;
+    padding: 20px;
+    margin-bottom: 18px;
+}
+
+.barber-dashboard .admin-section-heading,
+.barber-dashboard .appointments-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    border-bottom: 1px solid var(--borde);
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+}
+
+.barber-dashboard .admin-section-heading h2,
+.barber-dashboard .appointments-heading h2 {
+    margin-bottom: 0;
+}
+
+.barber-dashboard .appointments-count {
+    color: var(--gris);
+    font-size: 14px;
+}
+
+.barber-dashboard .empty-appointments {
     text-align: center;
-    border-top: 1px solid #222;
-    padding-top: 20px;
+    color: var(--gris);
+    padding: 18px;
 }
 
-@media (max-width: 860px) {
-    .portada-header {
-        position: static;
-    }
-
-    .hero-portada {
-        grid-template-columns: 1fr;
-        text-align: center;
-        padding-top: 40px;
-    }
-
-    .hero-texto > p:not(.etiqueta) {
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .hero-acciones {
-        justify-content: center;
-    }
-
-    .hero-imagen img {
-        max-width: 280px;
-    }
-
-    .ventajas {
-        grid-template-columns: 1fr;
-        margin-top: 0;
-    }
-
-    .cta-reservar {
-        margin: 50px 16px;
-        padding: 28px;
-        text-align: center;
-        justify-content: center;
-    }
+/* Formularios */
+.barber-dashboard .admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
 }
 
+.barber-dashboard .admin-form-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
 
-/* ============================================================
-   HORAS DISPONIBLES (formulario de reserva)
-   ============================================================ */
+.barber-dashboard .admin-form-grid input,
+.barber-dashboard .admin-form-grid select,
+.barber-dashboard .admin-form-grid textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--borde);
+    border-radius: 3px;
+    background: var(--blanco);
+    font: inherit;
+    font-weight: normal;
+}
+
+.barber-dashboard .admin-form-grid input:focus,
+.barber-dashboard .admin-form-grid select:focus,
+.barber-dashboard .admin-form-grid textarea:focus {
+    outline: 2px solid var(--azul-claro);
+    border-color: var(--azul-claro);
+}
+
+.barber-dashboard .admin-input-affix {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.barber-dashboard .admin-field-wide {
+    grid-column: 1 / -1;
+}
+
+/* Botones de las tablas */
+.barber-dashboard .admin-row-actions,
+.barber-dashboard .appointment-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.barber-dashboard .action-button {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid;
+    border-radius: 3px;
+    background: var(--blanco);
+    font: inherit;
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.barber-dashboard .action-edit {
+    color: var(--azul-claro);
+    border-color: var(--azul-claro);
+}
+
+.barber-dashboard .action-accept {
+    color: var(--verde);
+    border-color: var(--verde);
+}
+
+.barber-dashboard .action-reject {
+    color: var(--rojo);
+    border-color: var(--rojo);
+}
+
+.barber-dashboard .no-action {
+    color: var(--gris);
+}
+
+/* Estados de las citas */
+.barber-dashboard .status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.barber-dashboard .status-pendiente {
+    background: #fff4e0;
+    color: var(--amarillo);
+}
+
+.barber-dashboard .status-confirmada,
+.barber-dashboard .status-completada {
+    background: #e8f5e9;
+    color: var(--verde);
+}
+
+.barber-dashboard .status-rechazada,
+.barber-dashboard .status-cancelada {
+    background: #fdecea;
+    color: var(--rojo);
+}
+
+/* Horas disponibles (formulario de reserva) */
 .barber-dashboard .campo-titulo {
     display: block;
-    color: #e3e3e3;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 6px;
 }
 
 .barber-dashboard .horas-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    min-height: 44px;
-    align-items: center;
+    gap: 6px;
 }
 
 .barber-dashboard .horas-mensaje {
-    color: #9a9a9a;
+    color: var(--gris);
     font-size: 14px;
 }
 
 .barber-dashboard .hora-opcion {
-    min-width: 76px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: 1px solid #424242;
-    background: #101010;
-    color: #fff;
+    padding: 6px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 3px;
+    background: var(--blanco);
     font: inherit;
     cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
 }
 
 .barber-dashboard .hora-opcion:hover {
-    border-color: #d4af37;
+    border-color: var(--azul-claro);
 }
 
 .barber-dashboard .hora-opcion.activa {
-    background: #d4af37;
-    border-color: #d4af37;
-    color: #111;
-    font-weight: bold;
+    background: var(--azul-claro);
+    border-color: var(--azul-claro);
+    color: var(--blanco);
 }
 
 .barber-dashboard .horario-barbero {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-    margin-top: 14px;
+    margin-top: 10px;
     font-size: 13px;
-    color: #9a9a9a;
+    color: var(--gris);
 }
 
 .barber-dashboard .horario-chip {
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: rgba(212, 175, 55, 0.12);
-    color: #d4af37;
+    margin-right: 10px;
 }
 
-/* Gestion de horarios (admin) */
+/* Dias de la semana (horarios del administrador) */
 .barber-dashboard .dias-semana {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 14px;
 }
 
-.barber-dashboard .dia-opcion {
-    display: flex !important;
-    flex-direction: row !important;
+.barber-dashboard .admin-form-grid .dia-opcion {
+    flex-direction: row;
     align-items: center;
-    gap: 8px !important;
-    padding: 10px 14px;
-    border: 1px solid #424242;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 400 !important;
+    gap: 6px;
+    font-weight: normal;
 }
 
-.barber-dashboard .dia-opcion input {
-    width: auto !important;
-    min-height: 0 !important;
-    accent-color: #d4af37;
+.barber-dashboard .admin-form-grid .dia-opcion input {
+    width: auto;
+}
+
+/* ============================================================
+   PANTALLAS PEQUEÑAS
+   ============================================================ */
+@media (max-width: 700px) {
+    .encabezado-contenido,
+    .barber-dashboard .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .barber-dashboard .admin-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .barber-dashboard .dashboard-header {
+        padding: 12px 16px;
+    }
 }
