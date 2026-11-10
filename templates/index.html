@@ -11,7 +11,7 @@
     {# A donde lleva el boton "Reservar" segun quien este conectado #}
     {% if session.get('rol') == 'cliente' %}
         {% set url_panel = url_for('panel_cliente') %}
-    {% elif session.get('rol') in ('barbero', 'administrador') %}
+    {% elif session.get('rol') == 'barbero' %}
         {% set url_panel = url_for('panel_barbero') %}
     {% else %}
         {% set url_panel = url_for('login') %}

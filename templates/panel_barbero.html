@@ -15,10 +15,6 @@
         <nav class="dashboard-nav" aria-label="Navegación principal">
             <a class="is-active" href="{{ url_for('panel_barbero') }}">Inicio</a>
             <a href="{{ url_for('panel_barbero') }}#appointments-title">Citas</a>
-            {% if session.get('rol') == 'administrador' %}
-                <a href="{{ url_for('administrar_servicios') }}">Servicios</a>
-                <a href="{{ url_for('administrar_barberos') }}">Barberos</a>
-            {% endif %}
         </nav>
         <div class="dashboard-user">
             <div>
@@ -86,7 +82,6 @@
                     <thead>
                         <tr>
                             <th scope="col">Cliente</th>
-                            <th scope="col">Barbero</th>
                             <th scope="col">Servicio</th>
                             <th scope="col">Fecha</th>
                             <th scope="col">Hora</th>
@@ -98,7 +93,6 @@
                         {% for cita in citas %}
                             <tr>
                                 <td data-label="Cliente">{{ cita.cliente }}</td>
-                                <td data-label="Barbero">{{ cita.barbero }}</td>
                                 <td data-label="Servicio">{{ cita.servicio }}</td>
                                 <td data-label="Fecha">{{ cita.fecha }}</td>
                                 <td data-label="Hora">{{ cita.hora }}</td>
@@ -136,7 +130,7 @@
                             </tr>
                         {% else %}
                             <tr>
-                                <td class="empty-appointments" colspan="7">
+                                <td class="empty-appointments" colspan="6">
                                     No hay solicitudes de citas para mostrar.
                                 </td>
                             </tr>

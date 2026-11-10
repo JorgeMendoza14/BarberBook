@@ -314,7 +314,7 @@ h2 {
 }
 
 /* ============================================================
-   PANELES (cliente, barbero y administrador)
+   PANELES (cliente y barbero)
    ============================================================ */
 .barber-dashboard .dashboard-header {
     display: flex;
@@ -507,12 +507,6 @@ h2 {
     border-color: var(--azul-claro);
 }
 
-.barber-dashboard .admin-input-affix {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
 .barber-dashboard .admin-field-wide {
     grid-column: 1 / -1;
 }
@@ -628,24 +622,6 @@ h2 {
 
 .barber-dashboard .horario-chip {
     margin-right: 10px;
-}
-
-/* Dias de la semana (horarios del administrador) */
-.barber-dashboard .dias-semana {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-}
-
-.barber-dashboard .admin-form-grid .dia-opcion {
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
-    font-weight: normal;
-}
-
-.barber-dashboard .admin-form-grid .dia-opcion input {
-    width: auto;
 }
 
 /* ============================================================

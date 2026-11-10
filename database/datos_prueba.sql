@@ -5,7 +5,7 @@
 -- Todos los usuarios de prueba tienen la contraseña: Barber2026
 --   Barberos: carlos@barberbook.com, miguel@barberbook.com
 --   Clientes: ana@correo.com, luis@correo.com, maria@correo.com
--- (El administrador se crea con: python crear_admin.py)
+-- Los barberos, servicios y horarios se registran directamente en la base de datos.
 -- ============================================================
 
 SET NAMES utf8mb4;
